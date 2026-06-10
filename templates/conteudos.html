@@ -7,15 +7,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='conteudos-fut.css') }}">
 </head>
 <body class="nm-body fut-body">
-<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
-<div class="nm-blob nm-blob-1"></div>
-<div class="nm-blob nm-blob-2"></div>
 
+<!-- Particle canvas -->
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+
+<!-- Page transition overlay -->
+<div id="con-transition"></div>
+
+<!-- ── NAV (identical structure to dashboard) ── -->
 <nav class="fut-nav">
-    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
-    <div class="fut-nav-center"><span class="fut-nav-badge">TRILHA · {{ materia|upper }}</span></div>
+    <div class="fut-nav-logo">
+        <span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span>
+    </div>
+    <div class="fut-nav-center">
+        <span class="fut-nav-badge">TRILHA · {{ materia | upper }}</span>
+    </div>
     <div class="fut-nav-right">
         <div class="fut-nav-user">
             <div class="fut-nav-user-dot"></div>
@@ -25,69 +34,140 @@
     </div>
 </nav>
 
-<div class="nm-status-bar">
-    <span class="nm-status-dot"></span>
-    <span class="nm-status-text">{{ materia|upper }} · SELECIONE O MÓDULO</span>
-</div>
+<!-- ── MAIN CONTENT ── -->
+<main style="position:relative; z-index:1;">
+<div class="con-page">
 
-<main class="nm-main" style="position:relative;z-index:1;">
-    <div class="nm-page-header">
-        <a href="/materias" class="nm-breadcrumb">← Matérias</a>
-        <h1 class="nm-page-title">Trilha: <em>{{ materia }}</em></h1>
-        <p class="nm-page-sub">Progresso: <strong>{{ usuario.pontos }} XP</strong> &nbsp;·&nbsp; Nível Atual: <strong>{{ usuario.nivel.upper() }}</strong></p>
-    </div>
+    <!-- Header -->
+    <header class="con-header">
+        <a href="/materias" class="con-breadcrumb">← MATÉRIAS</a>
+        <div class="con-eyebrow">
+            <span class="con-eyebrow-dot"></span>
+            TRILHA DE ESTUDOS
+        </div>
+        <h1 class="con-title">{{ materia }}</h1>
 
-    <div class="nm-topics-list" style="display: flex; flex-direction: column; gap: 24px;">
-        {% for topico_id, dados_topico in topicos.items() %}
-        <div class="nm-topic-card" style="background: rgba(4, 10, 24, 0.9); padding: 24px; border: 1px solid rgba(0, 180, 255, 0.15); border-radius: 6px;">
-            <div class="nm-topic-card-header" style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
-                <div class="nm-topic-icon" style="font-size: 2rem;">📚</div>
+        <!-- XP / level status -->
+        <div class="con-status-row">
+            <div class="con-status-item">
+                <span class="con-status-icon">⚡</span>
                 <div>
-                    <h2 class="nm-topic-title" style="font-family: 'Rajdhani', sans-serif; color: #fff; font-size: 1.4rem;">{{ dados_topico.titulo_exibicao }}</h2>
-                    <p class="nm-topic-hint" style="color: rgba(180, 210, 255, 0.6); font-size: 0.9rem;">Escolha o nível de profundidade para iniciar a missão teórica.</p>
+                    <span class="con-status-label">XP TOTAL</span>
+                    <span class="con-status-val xp">{{ usuario.pontos }} XP</span>
                 </div>
             </div>
-            
-            <div class="nm-topic-levels" style="display: flex; gap: 12px; flex-wrap: wrap;">
-                
-                <a href="/questoes/{{ materia }}/{{ topico_id }}/novato/livro" class="nm-level-btn nm-level-btn-novato" style="text-decoration: none; padding: 10px 20px; background: rgba(0, 200, 255, 0.1); border: 1px solid #00c8ff; color: #fff; display: flex; align-items: center; gap: 8px; border-radius: 4px;">
-                    <span class="nm-level-btn-icon">🌱</span>
-                    <span class="nm-level-btn-text"><strong>Estudar Novato</strong></span>
+            <div class="con-status-divider"></div>
+            <div class="con-status-item">
+                <span class="con-status-icon">🎖️</span>
+                <div>
+                    <span class="con-status-label">NÍVEL ATUAL</span>
+                    <span class="con-status-val lvl-{{ usuario.nivel }}">{{ usuario.nivel | upper }}</span>
+                </div>
+            </div>
+            <div class="con-status-divider"></div>
+            <div class="con-status-item">
+                <span class="con-status-icon">📚</span>
+                <div>
+                    <span class="con-status-label">MÓDULOS</span>
+                    <span class="con-status-val">{{ topicos | length }} TÓPICOS</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section label -->
+    <div class="con-section-head">
+        <span class="con-section-label">SELECIONE O MÓDULO</span>
+        <div class="con-section-line"></div>
+        <span class="con-topic-count">{{ topicos | length }} DISPONÍVEIS</span>
+    </div>
+
+    <!-- Topics list -->
+    <div class="con-topics-list">
+
+        {% set topic_icons = [
+            '📖','🔬','⚗️','🌍','📐','🧩','🏛️','🔭','🧬','⚙️'
+        ] %}
+
+        {% for topico_id, dados_topico in topicos.items() %}
+        <div class="con-topic-card">
+
+            <!-- Decorative layers -->
+            <div class="con-topic-card-shine"></div>
+            <div class="con-topic-card-glow"></div>
+
+            <!-- Card header -->
+            <div class="con-topic-head">
+                <div class="con-topic-icon-wrap">
+                    {{ topic_icons[loop.index0 % topic_icons|length] }}
+                </div>
+                <div class="con-topic-meta">
+                    <span class="con-topic-num">MÓDULO {{ '%02d' % loop.index }}</span>
+                    <div class="con-topic-title">{{ dados_topico.titulo_exibicao }}</div>
+                    <div class="con-topic-hint">Escolha o nível de profundidade para iniciar a missão teórica.</div>
+                </div>
+            </div>
+
+            <!-- Level buttons -->
+            <div class="con-level-row">
+
+                <!-- NOVATO — always unlocked -->
+                <a href="/questoes/{{ materia }}/{{ topico_id }}/novato/livro"
+                   class="con-level-btn con-level-novato">
+                    <div class="con-level-btn-shine"></div>
+                    <span class="con-level-btn-icon">🌱</span>
+                    ESTUDAR NOVATO
                 </a>
 
+                <!-- INTERMEDIÁRIO -->
                 {% if usuario.nivel in ['intermediario', 'pro'] %}
-                <a href="/questoes/{{ materia }}/{{ topico_id }}/intermediario/livro" class="nm-level-btn nm-level-btn-inter" style="text-decoration: none; padding: 10px 20px; background: rgba(180, 60, 255, 0.1); border: 1px solid #b43cff; color: #fff; display: flex; align-items: center; gap: 8px; border-radius: 4px;">
-                    <span class="nm-level-btn-icon">⚔️</span>
-                    <span class="nm-level-btn-text"><strong>Estudar Intermediário</strong></span>
+                <a href="/questoes/{{ materia }}/{{ topico_id }}/intermediario/livro"
+                   class="con-level-btn con-level-inter">
+                    <div class="con-level-btn-shine"></div>
+                    <span class="con-level-btn-icon">⚔️</span>
+                    ESTUDAR INTERMEDIÁRIO
                 </a>
                 {% else %}
-                <div class="nm-level-btn" style="padding: 10px 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); display: flex; align-items: center; gap: 8px; border-radius: 4px; cursor: not-allowed;" title="Bloqueado: Requer Nível Intermediário (50 XP)">
-                    <span class="nm-level-btn-icon">🔒</span>
-                    <span class="nm-level-btn-text">Intermediário (Requer 50 XP)</span>
+                <div class="con-level-btn con-level-locked"
+                     title="Bloqueado: Requer Nível Intermediário (50 XP)">
+                    <span class="con-level-btn-icon">🔒</span>
+                    INTERMEDIÁRIO
+                    <span class="con-locked-hint">50 XP</span>
                 </div>
                 {% endif %}
 
+                <!-- PRO -->
                 {% if usuario.nivel == 'pro' %}
-                <a href="/questoes/{{ materia }}/{{ topico_id }}/pro/livro" class="nm-level-btn nm-level-btn-pro" style="text-decoration: none; padding: 10px 20px; background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; color: #fff; display: flex; align-items: center; gap: 8px; border-radius: 4px;">
-                    <span class="nm-level-btn-icon">👑</span>
-                    <span class="nm-level-btn-text"><strong>Estudar PRO</strong></span>
+                <a href="/questoes/{{ materia }}/{{ topico_id }}/pro/livro"
+                   class="con-level-btn con-level-pro">
+                    <div class="con-level-btn-shine"></div>
+                    <span class="con-level-btn-icon">👑</span>
+                    ESTUDAR PRO
                 </a>
                 {% else %}
-                <div class="nm-level-btn" style="padding: 10px 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); display: flex; align-items: center; gap: 8px; border-radius: 4px; cursor: not-allowed;" title="Bloqueado: Requer Nível PRO (100 XP)">
-                    <span class="nm-level-btn-icon">🔒</span>
-                    <span class="nm-level-btn-text">Módulo PRO (Requer 100 XP)</span>
+                <div class="con-level-btn con-level-locked"
+                     title="Bloqueado: Requer Nível PRO (100 XP)">
+                    <span class="con-level-btn-icon">🔒</span>
+                    MÓDULO PRO
+                    <span class="con-locked-hint">100 XP</span>
                 </div>
                 {% endif %}
 
             </div>
         </div>
         {% endfor %}
+
     </div>
 
-    <div style="margin-top:2rem; text-align:center;">
-        <a href="/materias" class="nm-breadcrumb">← Voltar para Matérias</a>
+    <!-- Back link -->
+    <div class="con-back-row">
+        <a href="/materias" class="con-back-link">← VOLTAR PARA MATÉRIAS</a>
     </div>
+
+</div>
 </main>
+
 <script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+<script src="{{ url_for('static', filename='conteudos-fut.js') }}"></script>
 </body>
 </html>

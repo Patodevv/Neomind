@@ -1,30 +1,20 @@
 import os
 import random
-import json  # Processa o JSON gerado pela IA
+import json 
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-
-# SDK da Groq
 from groq import Groq
 
-# IMPORTAÇÃO DO SEU ARQUIVO DE CONTEÚDO
 from conteudos_dados import CONTEUDO_PLATAFORMA
-
-# ==========================================
-# INICIALIZAÇÃO DO FLASK E CONFIGURAÇÕES
-# ==========================================
 
 app = Flask(__name__)
 
-# CONFIGURAÇÃO DO BANCO SQLITE
+# Configurações do App
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# CHAVE DE SESSÃO
 app.secret_key = 'mvp_edtech'
 
-# CONFIGURAÇÃO DE UPLOAD DE FOTOS
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limita o upload a 16MB
@@ -32,33 +22,23 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limita o upload a 16MB
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# INICIALIZA SQLALCHEMY
 db = SQLAlchemy(app)
-
-# INICIALIZA O CLIENTE DA GROQ
 groq_client = Groq(api_key="")
 
-
 # ==========================================
-# MODEL USUARIO (Com Perfil e XP)
+# MODELOS DO BANCO DE DADOS
 # ==========================================
 
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     usuario = db.Column(db.String(100), unique=True, nullable=False)
     senha = db.Column(db.String(100), nullable=False)
-    
-    # Gosto do usuário (animes, jogos ou esportes)
+
     interesse = db.Column(db.String(50), nullable=False)
-    
-    # Campos para o perfil customizado
     recado = db.Column(db.String(300), nullable=True, default="Olá! Estou focado nos meus estudos.")
     foto = db.Column(db.String(200), nullable=True, default="default.png")
-    
-    # Sistema de Gamificação (Pontos acumulados)
     pontos = db.Column(db.Integer, nullable=False, default=0)
 
-    # Retorna dinamicamente a faixa de nível com base no XP acumulado
     @property
     def nivel(self):
         if self.pontos < 50:
@@ -68,28 +48,18 @@ class Usuario(db.Model):
         else:
             return 'pro'
 
-
-# ==========================================
-# MODEL HISTORICO
-# ==========================================
-
 class Historico(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     usuario = db.Column(db.String(100), nullable=False)
     pergunta = db.Column(db.String(200), nullable=False)
     resultado = db.Column(db.String(50), nullable=False)
 
-
-# ==========================================
-# CRIA O BANCO AUTOMATICAMENTE
-# ==========================================
-
+# Inicialização do Banco
 with app.app_context():
     db.create_all()
 
-
 # ==========================================
-# ROTAS DE AUTENTICAÇÃO E HOME
+# ROTAS DO SISTEMA
 # ==========================================
 
 @app.route('/')
@@ -135,7 +105,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.clear()  # Limpa toda a sessão do usuário
+    session.clear() 
     return redirect('/login')
 
 
@@ -143,48 +113,42 @@ def logout():
 def dashboard():
     if 'usuario' not in session:
         return redirect('/login')
-    
-    # Buscando o objeto completo do usuário para evitar problemas no painel
     usuario_atual = Usuario.query.filter_by(usuario=session['usuario']).first()
-    return render_template('dashboard.html', usuario=usuario_atual)
+    # Passa o nome como string simples, pois o template dashboard.html
+    # referencia {{ usuario }} diretamente para exibir o nome do jogador.
+    return render_template('dashboard.html', usuario=usuario_atual.usuario)
 
 
 @app.route('/perfil', methods=['GET', 'POST'])
 def perfil():
     if 'usuario' not in session:
         return redirect('/login')
-
+    
     usuario_atual = Usuario.query.filter_by(usuario=session['usuario']).first()
-
+    
     if request.method == 'POST':
         usuario_atual.recado = request.form.get('recado')
         usuario_atual.interesse = request.form.get('interesse')
-
         file = request.files.get('foto')
+        
         if file and file.filename != '':
             filename = secure_filename(file.filename)
             filename = f"user_{usuario_atual.id}_{filename}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             usuario_atual.foto = filename
-
+            
         db.session.commit()
         return redirect('/perfil')
-
+        
     return render_template('perfil.html', usuario=usuario_atual)
 
-
-# ==========================================
-# FLUXO: CURSOS ➔ CONTEÚDOS
-# ==========================================
 
 @app.route('/materias')
 def materias():
     if 'usuario' not in session:
         return redirect('/login')
     
-    # CORREÇÃO: Buscando o usuário logado para passar ao template e alimentar a navbar
     usuario_atual = Usuario.query.filter_by(usuario=session['usuario']).first()
-    
     lista_materias = list(CONTEUDO_PLATAFORMA.keys())
     return render_template('materias.html', materias=lista_materias, usuario=usuario_atual)
 
@@ -208,10 +172,6 @@ def conteudos(materia):
     )
 
 
-# ==========================================
-# SETOR: LIVROS (Teoria Gerada Dinamicamente por IA)
-# ==========================================
-
 @app.route('/questoes/<materia>/<topico>/<nivel>/livro', methods=['GET', 'POST'])
 def livro(materia, topico, nivel):
     if 'usuario' not in session:
@@ -226,7 +186,6 @@ def livro(materia, topico, nivel):
     if nivel == 'pro' and nivel_maximo in ['novato', 'intermediario']:
         return redirect(f'/questoes/{materia}')
 
-    # Captura segura para evitar erros se a rota vier com chaves antigas
     try:
         titulo_exibicao = CONTEUDO_PLATAFORMA.get(materia, {}).get(topico, {}).get('titulo_exibicao')
         if not titulo_exibicao:
@@ -238,51 +197,73 @@ def livro(materia, topico, nivel):
         session[f"leu_{materia}_{topico}_{nivel}"] = True
         return redirect(f'/questoes/{materia}/{topico}/{nivel}/questoes')
 
-    # ---- MODO GET: GERAR O LIVRO DIDÁTICO DO ZERO VIA GROQ ----
     chave_sessao_livro = f"texto_livro_{materia}_{topico}_{nivel}"
     
     if chave_sessao_livro not in session:
-        prompt_livro = f"""Você é um professor acadêmico de elite e autor de livros de ciências exatas reconhecido mundialmente.
-Sua missão é escrever um capítulo de livro teórico, curto, ultra-didático e com precisão científica absoluta sobre a disciplina '{materia}' focando especificamente no tópico '{titulo_exibicao}'.
 
----
-[DIRETRIZES DE PÚBLICO E RIGOR]
-1. Universo Visual: Explique toda a teoria aplicando analogias diretas, imersivas e maduras do universo de {gosto_usuario} (mecanismos matemáticos de RPG/jogos eletrônicos, escalas de poder de animes de batalha ou dados táticos/estatísticos esportivos reais). Evite bobeiras infantis.
-2. Nível de Profundidade Teórica: {nivel.upper()}
-   - Se 'novato': Presente o conceito intuitivo elementar, as regras fundamentais e a fórmula básica.
-   - Se 'intermediario': Introduza propriedades conceituais/algébricas formais, manipulações estruturais e teoremas operacionais.
-   - Se 'pro': Explore a fundo a teoria abstrata, teoremas avançados e demonstrações rigorosas do conceito.
+        NIVEIS_DESCRICAO = {
+            'novato':       'introdutório — conceitos fundamentais, sem pré-requisitos, linguagem acessível',
+            'intermediario':'intermediário — aprofunda relações entre conceitos, inclui fórmulas e aplicações práticas',
+            'pro':          'avançado — análise crítica, demonstrações, casos-limite e nuances teóricas complexas'
+        }
+        descricao_nivel = NIVEIS_DESCRICAO.get(nivel, nivel)
 
----
-[REGRAS DE FORMATAÇÃO E REVISÃO CRÍTICA]
-- CONCEITO IMPECÁVEL: Revise internamente toda a lógica matemática ou física antes de responder. Sinais, expoentes e propriedades estruturais devem estar 100% corretos conforme as leis científicas globais.
-- FORMATAÇÃO HTML: O texto gerado deve vir estruturado puramente in tags HTML simples (use exclusivamente <p>, <strong>, <ul>, <li> para parágrafos, destaques e listas).
-- MATEMÁTICA EM LATEX: Toda e qualquer variável de controle, potências, expressões ou equações formais DEVEM vir encapsuladas entre cifrões simples para LaTeX inline (Ex: $2^3 = 8$, $\\log_b a = x$).
-- SEJA DIRETO: Vá direto ao ponto. Entregue um texto fluido composto por 3 a 5 parágrafos densos e instrutivos. Não insira saudações, metas descritivas ou falas periféricas como "Olá aluno" ou "Espero que ajude".
+        UNIVERSOS = {
+            'animes':   'animes e mangás (personagens, batalhas, poderes, academias ninja/magia, torneios)',
+            'jogos':    'videogames (RPGs, FPS, estratégia, mecânicas de jogo, missões, stats de personagem)',
+            'esportes': 'esportes (táticas de jogo, treinamentos, competições, estatísticas de atletas)'
+        }
+        contexto_interesse = UNIVERSOS.get(gosto_usuario, gosto_usuario)
 
-Texto do Capítulo:"""
+        prompt_livro = f"""Você é um autor de materiais didáticos de elite. Sua missão é escrever um capítulo teórico sobre "{titulo_exibicao}" da disciplina "{materia}".
+
+## PERFIL DO LEITOR
+- Nível de conhecimento: {descricao_nivel}
+- Universo de interesse para analogias: {contexto_interesse}
+
+## INSTRUÇÕES DE CONTEÚDO
+1. Cubra os conceitos centrais do tópico com precisão técnica rigorosa, adequada ao nível exigido.
+2. Para cada conceito abstrato, construa UMA analogia clara usando o universo "{gosto_usuario}" — a analogia deve iluminar o conceito, não substituí-lo.
+3. Inclua pelo menos uma fórmula ou expressão técnica relevante ao tópico (use LaTeX inline: $formula$).
+4. Mantenha neutralidade absoluta: sem opiniões políticas, morais ou ideológicas.
+5. Extensão: entre 4 e 6 parágrafos densos e informativos.
+
+## FORMATO DE SAÍDA
+- Retorne SOMENTE HTML usando as tags: <p>, <strong>, <ul>, <li>.
+- Fórmulas: LaTeX inline entre cifrões simples — ex: $F = ma$.
+- Sem títulos, saudações, introduções meta ou conclusões do tipo "espero ter ajudado".
+- Comece diretamente com o primeiro <p> do conteúdo.
+
+Capítulo:"""
 
         try:
             completion = groq_client.chat.completions.create(
                 model="llama-3.1-8b-instant",
                 messages=[
                     {
-                        "role": "system", 
-                        "content": "Você é um escritor de materiais educacionais em formato HTML e LaTeX científico. Você nunca erra definições ou cálculos e se limita a entregar exclusivamente o texto teórico pedido."
+                        "role": "system",
+                        "content": (
+                            "Você é um redator acadêmico especialista. "
+                            "Produz HTML didático estruturado com LaTeX inline para fórmulas. "
+                            "Nunca quebra o formato solicitado. Nunca emite julgamentos de valor."
+                        )
                     },
                     {
-                        "role": "user", 
+                        "role": "user",
                         "content": prompt_livro
                     }
                 ],
-                temperature=0.2
+                temperature=0.25
             )
             texto_gerado = completion.choices[0].message.content.strip()
             session[chave_sessao_livro] = texto_gerado
             
         except Exception as e:
-            print(f"Erro detectado na geração dinâmica do livro didático ({e}).")
-            session[chave_sessao_livro] = f"<p>O motor de dados está atualizando suas matrizes teóricas. Por favor, recarregue a página para acessar o conteúdo de {titulo_exibicao}.</p>"
+            print(f"Erro na geração do livro didático: {e}")
+            session[chave_sessao_livro] = (
+                f"<p>O módulo de geração de conteúdo está atualizando suas matrizes. "
+                f"Recarregue a página para acessar o capítulo de <strong>{titulo_exibicao}</strong>.</p>"
+            )
 
     return render_template(
         'livro.html',
@@ -295,18 +276,17 @@ Texto do Capítulo:"""
     )
 
 
-# ==========================================
-# SETOR: QUESTÕES GERADAS POR IA + EXPLICAÇÃO
-# ==========================================
-
 @app.route('/questoes/<materia>/<topico>/<nivel>/questoes', methods=['GET', 'POST'])
 def questoes_simulador(materia, topico, nivel):
     if 'usuario' not in session:
         return redirect('/login')
-
-    # Validação se o usuário leu o livro teórico antes das questões
     if not session.get(f"leu_{materia}_{topico}_{nivel}"):
-        return "<script>alert('Você deve ler o livro teórico antes de acessar as questões deste setor!'); window.location.href='" + f"/questoes/{materia}/{topico}/{nivel}/livro" + "';</script>"
+        return (
+            "<script>"
+            "alert('Você deve ler o livro teórico antes de acessar as questões deste setor!');"
+            f"window.location.href='/questoes/{materia}/{topico}/{nivel}/livro';"
+            "</script>"
+        )
 
     usuario_atual = Usuario.query.filter_by(usuario=session['usuario']).first()
     gosto_usuario = usuario_atual.interesse
@@ -321,7 +301,6 @@ def questoes_simulador(materia, topico, nivel):
     pontos_ganhos = 0
     explicacao_ia = None
 
-    # ---- MODO POST: CORRIGIR RESPOSTA E PEDIR EXPLICAÇÃO À IA ----
     if request.method == 'POST':
         pergunta = session.get('questao_atual')
         resposta_usuario = request.form.get('resposta')
@@ -329,8 +308,6 @@ def questoes_simulador(materia, topico, nivel):
         if pergunta and resposta_usuario:
             if 'correta' not in pergunta:
                 pergunta['correta'] = 'a'
-            
-            # Validação da resposta
             if resposta_usuario.lower() == pergunta['correta'].lower():
                 resultado = 'Acertou!'
                 usuario_atual.pontos += 10
@@ -338,7 +315,6 @@ def questoes_simulador(materia, topico, nivel):
             else:
                 resultado = 'Errou!'
 
-            # Salva histórico no Banco de Dados de forma garantida
             novo_historico = Historico(
                 usuario=session['usuario'],
                 pergunta=pergunta['titulo'],
@@ -347,27 +323,50 @@ def questoes_simulador(materia, topico, nivel):
             db.session.add(novo_historico)
             db.session.commit()
 
-            # Prompt focado em explicar o resultado da questão já respondida
-            prompt_explicacao = f"""Você é um tutor pedagógico experiente. O aluno acabou de responder uma questão de {materia} focada em {titulo_exibicao}.
-            
-Enunciado da Questão: {pergunta['titulo']}
-Alternativa Correta: {pergunta['correta'].upper()}) {pergunta.get(pergunta['correta'].lower(), '')}
-Resposta Escolhida pelo Aluno: {resposta_usuario.upper()} (O aluno {resultado})
+            gabarito_letra = pergunta['correta'].upper()
+            gabarito_texto = pergunta.get(pergunta['correta'].lower(), '(sem texto)')
+            acertou = resultado == 'Acertou!'
 
-Forneça uma explicação curta, direta, cientificamente correta e pedagógica (máximo de 4 linhas) justificando o porquê de a alternativa {pergunta['correta'].upper()} ser a resposta certa. Use referências de {gosto_usuario} de forma natural para engajar e aplique LaTeX nas fórmulas matemáticas se houver."""
+            prompt_explicacao = f"""Você é um tutor acadêmico direto e envolvente. Gere um feedback pedagógico sobre a questão abaixo.
+
+## DADOS DA QUESTÃO
+- Disciplina / Tópico: {materia} — {titulo_exibicao}
+- Enunciado: {pergunta['titulo']}
+- Gabarito correto: {gabarito_letra}) {gabarito_texto}
+- O aluno respondeu: {"CORRETAMENTE ✓" if acertou else f"INCORRETAMENTE ✗ (escolheu a alternativa {resposta_usuario.upper()})"}
+
+## INSTRUÇÕES
+1. {'Parabenize brevemente e reforce POR QUÊ a alternativa está correta, citando o princípio científico/técnico central.' if acertou else 'Seja empático mas direto: explique onde o raciocínio falha e POR QUÊ o gabarito é correto, mostrando o princípio científico/técnico envolvido.'}
+2. Use UMA referência curta e espirituosa do universo "{gosto_usuario}" para tornar a explicação memorável — mas não deixe a analogia dominar o raciocínio técnico.
+3. Se houver fórmula relevante, use LaTeX inline: $formula$.
+4. Seja conciso: máximo 4 linhas. Sem introduções do tipo "Claro!" ou "Ótima pergunta!".
+
+Feedback:"""
 
             try:
                 resposta_explicacao = groq_client.chat.completions.create(
                     model="llama-3.1-8b-instant",
-                    messages=[{"role": "user", "content": prompt_explicacao}],
-                    temperature=0.4
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "Você é um tutor acadêmico preciso e motivador. "
+                                "Seus feedbacks são técnicos, concisos e levemente divertidos. "
+                                "Nunca emite julgamentos morais ou políticos."
+                            )
+                        },
+                        {
+                            "role": "user",
+                            "content": prompt_explicacao
+                        }
+                    ],
+                    temperature=0.3
                 )
-                explicacao_ia = resposta_explicacao.choices[0].message.content
+                explicacao_ia = resposta_explicacao.choices[0].message.content.strip()
             except Exception as e:
                 print(f"Erro na geração da explicação: {e}")
-                explicacao_ia = "Não foi possível carregar a explicação em tempo real, mas revise os conceitos descritos no livro do módulo!"
+                explicacao_ia = "Não foi possível carregar a explicação em tempo real. Revise os conceitos no livro do módulo!"
             
-            # Retorna o mesmo template mantendo a pergunta atual fixa para mostrar a correção
             return render_template(
                 'questoes_sistema.html',
                 pergunta=pergunta,
@@ -380,30 +379,39 @@ Forneça uma explicação curta, direta, cientificamente correta e pedagógica (
                 explicacao_ia=explicacao_ia
             )
 
-    # ---- MODO GET: GERAR NOVA QUESTÃO DINÂMICA VIA GROQ ----
-    prompt_geracao = f"""Você é um criador de avaliações acadêmicas. Sua tarefa é criar uma questão de múltipla escolha baseada estritamente na disciplina de '{materia}' e no conteúdo didático fornecido abaixo. Não invente conteúdos de outras matérias.
+    # ── GERAÇÃO DA QUESTÃO ──
+    NIVEIS_INSTRUCAO = {
+        'novato':       'básico: conceitos diretos, sem cálculos complexos, alternativas claramente distintas',
+        'intermediario':'intermediário: exige relacionar conceitos e aplicar fórmulas simples',
+        'pro':          'avançado: análise crítica, casos-limite, cálculos mais elaborados, distratores sutis'
+    }
+    instrucao_nivel = NIVEIS_INSTRUCAO.get(nivel, nivel)
 
----
-[DIRETRIZES DA MATÉRIA E DO ALUNO]
-- Disciplina Obrigatória: {materia} (Tópico específico: {titulo_exibicao})
-- Perfil do aluno (Contexto visual): {gosto_usuario} (Utilize termos desse universo para envelopar o enunciado de forma imersiva e madura).
-- Nível de complexidade: {nivel}
+    prompt_geracao = f"""Você é um elaborador de questões acadêmicas de alto nível. Crie uma questão de múltipla escolha original sobre "{titulo_exibicao}" em "{materia}".
 
----
-[TEXTO DE REFERÊNCIA DO LIVRO - UTILIZE ISTO COMO BASE]
-"{texto_do_livro}"
+## PARÂMETROS
+- Nível de dificuldade: {instrucao_nivel}
+- Universo temático para o cenário: {gosto_usuario}
+- Neutralidade: sem viés ideológico, moral ou político
 
----
-[FORMATO DE SAÍDA EXIGIDO]
-Sua resposta deve ser estritamente um objeto JSON puro e válido, sem markdown (sem ```json), respeitando as chaves abaixo:
+## DIRETRIZES DE QUALIDADE
+1. O ENUNCIADO deve apresentar um problema ou situação real ambientado criativamente em "{gosto_usuario}", exigindo aplicação do conteúdo de {titulo_exibicao}.
+2. As ALTERNATIVAS devem ser plausíveis e bem redigidas — evite distratores obviamente absurdos.
+3. Apenas UMA alternativa deve ser inquestionavelmente correta com base na teoria de {materia}.
+4. Use LaTeX inline ($...$) para qualquer expressão matemática ou científica no enunciado e nas alternativas.
+5. Baseie-se estritamente no conteúdo do texto de referência abaixo.
 
+## TEXTO DE REFERÊNCIA
+{texto_do_livro}
+
+## FORMATO DE SAÍDA — JSON PURO (sem markdown, sem blocos de código)
 {{
-    "titulo": "Enunciado completo da questão focado em {materia} e estruturado no universo de {gosto_usuario}. Use LaTeX entre $ se contiver formulações matemáticas.",
-    "a": "Texto da alternativa A",
-    "b": "Texto da alternativa B",
-    "c": "Texto da alternativa C",
-    "d": "Texto da alternativa D",
-    "correta": "Letra minúscula da alternativa correta (a, b, c ou d)"
+    "titulo": "Enunciado da questão com cenário de {gosto_usuario} cobrando {titulo_exibicao}.",
+    "a": "Texto completo da alternativa A.",
+    "b": "Texto completo da alternativa B.",
+    "c": "Texto completo da alternativa C.",
+    "d": "Texto completo da alternativa D.",
+    "correta": "letra minúscula da alternativa correta (a, b, c ou d)"
 }}"""
 
     try:
@@ -411,11 +419,15 @@ Sua resposta deve ser estritamente um objeto JSON puro e válido, sem markdown (
             model="llama-3.1-8b-instant",
             messages=[
                 {
-                    "role": "system", 
-                    "content": f"Você é um gerador de questões focado exclusivamente na matéria de {materia}. Você nunca gera conteúdos de matemática a menos que a matéria solicitada seja matemática."
+                    "role": "system",
+                    "content": (
+                        "Você é um elaborador de avaliações acadêmicas. "
+                        "Retorna EXCLUSIVAMENTE JSON válido conforme o schema solicitado. "
+                        "Nunca adiciona texto fora do JSON. Nunca usa blocos de código markdown."
+                    )
                 },
                 {
-                    "role": "user", 
+                    "role": "user",
                     "content": prompt_geracao
                 }
             ],
@@ -427,17 +439,17 @@ Sua resposta deve ser estritamente um objeto JSON puro e válido, sem markdown (
         pergunta = json.loads(texto_limpo)
         pergunta['correta'] = pergunta['correta'].lower()
         session['questao_atual'] = pergunta
-        session.modified = True  # Garante persistência imediata no cookie de sessão
+        session.modified = True
         
     except Exception as e:
         print(f"Erro na API Groq ao gerar questão: {e}")
         pergunta = {
-            'titulo': f'Considerando as propriedades fundamentais de {titulo_exibicao} na disciplina de {materia}, qual alternativa apresenta a correlação correta do módulo?',
-            'a': 'A alternativa mapeia os conceitos estruturais de forma linear.',
-            'b': 'Apresenta a aplicação direta descrita no capítulo teórico do livro.',
-            'c': 'Configura uma análise isolada das variáveis de controle.',
-            'd': 'Inverte os conceitos básicos determinados pelas leis da área.',
-            'correta': 'b'
+            'titulo': f'Considerando os princípios fundamentais de {titulo_exibicao} na disciplina de {materia}, qual alternativa apresenta a correlação correta?',
+            'a': 'Aplica corretamente os conceitos estruturais descritos no módulo teórico.',
+            'b': 'Inverte a relação de causa e efeito prevista pela teoria.',
+            'c': 'Confunde variáveis dependentes com parâmetros de controle.',
+            'd': 'Generaliza indevidamente um caso particular para o modelo geral.',
+            'correta': 'a'
         }
         session['questao_atual'] = pergunta
         session.modified = True
@@ -455,28 +467,16 @@ Sua resposta deve ser estritamente um objeto JSON puro e válido, sem markdown (
     )
 
 
-# ==========================================
-# ROTA DO HISTÓRICO DE ESTUDOS
-# ==========================================
-
 @app.route('/historico')
 def historico():
     if 'usuario' not in session:
         return redirect('/login')
 
-    # CORREÇÃO: Carregando o usuário para que a navbar de historico.html não quebre
     usuario_atual = Usuario.query.filter_by(usuario=session['usuario']).first()
-
-    # Busca apenas os históricos do usuário logado
     historicos_usuario = Historico.query.filter_by(usuario=session['usuario']).all()
 
-    # Renderiza o template mandando os dados obtidos do banco
     return render_template('historico.html', historicos=historicos_usuario, usuario=usuario_atual)
 
-
-# ==========================================
-# INICIALIZAÇÃO DO SERVIDOR
-# ==========================================
 
 if __name__ == '__main__':
     app.run(debug=True)

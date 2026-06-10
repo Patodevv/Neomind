@@ -8,15 +8,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='livro-fut.css') }}">
 </head>
 <body class="nm-body fut-body">
-<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
-<div class="nm-blob nm-blob-1"></div>
-<div class="nm-blob nm-blob-2"></div>
 
+<!-- Particle canvas -->
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+
+<!-- Page transition overlay -->
+<div id="liv-transition"></div>
+
+<!-- ── NAV ── -->
 <nav class="fut-nav">
-    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
-    <div class="fut-nav-center"><span class="fut-nav-badge">{{ nivel|upper }} · LEITURA</span></div>
+    <div class="fut-nav-logo">
+        <span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span>
+    </div>
+    <div class="fut-nav-center">
+        <span class="fut-nav-badge">{{ nivel | upper }} · LEITURA</span>
+    </div>
     <div class="fut-nav-right">
         <div class="fut-nav-user">
             <div class="fut-nav-user-dot"></div>
@@ -26,92 +35,138 @@
     </div>
 </nav>
 
-<div class="nm-status-bar">
-    <span class="nm-status-dot"></span>
-    <span class="nm-status-text">{{ materia|upper }} · {{ titulo_topico|upper }} · NÍVEL {{ nivel|upper }}</span>
-</div>
+<!-- ── MAIN ── -->
+<main style="position:relative; z-index:1;">
+<div class="liv-page">
 
-<main class="nm-main nm-book-layout" style="position:relative;z-index:1;">
-    <div class="nm-book-header">
-        <div class="nm-breadcrumb-row">
-            <a href="/materias" class="nm-breadcrumb">Matérias</a>
-            <span class="nm-breadcrumb-sep">›</span>
-            <a href="/questoes/{{ materia }}" class="nm-breadcrumb">{{ materia }}</a>
-            <span class="nm-breadcrumb-sep">›</span>
-            <span class="nm-breadcrumb-current">{{ titulo_topico }}</span>
-        </div>
-        <h1 class="nm-book-title">📖 {{ titulo_topico }}</h1>
-        <div class="nm-book-meta">
-            <span class="nm-book-level-tag nm-tag-{{ nivel }}">{{ nivel|upper }}</span>
-            <span class="nm-book-materia-tag">{{ materia }}</span>
-            <span class="nm-book-student">Estudante: <strong>{{ usuario.usuario }}</strong></span>
-        </div>
-    </div>
+    <!-- Breadcrumb -->
+    <nav class="liv-breadcrumb-row" aria-label="breadcrumb">
+        <a href="/materias"                  class="liv-breadcrumb">Matérias</a>
+        <span class="liv-breadcrumb-sep">›</span>
+        <a href="/questoes/{{ materia }}"    class="liv-breadcrumb">{{ materia }}</a>
+        <span class="liv-breadcrumb-sep">›</span>
+        <span class="liv-breadcrumb-current">{{ titulo_topico }}</span>
+    </nav>
 
-    <div class="nm-book-layout-inner">
-        <article class="nm-book-article">
-            <div class="nm-book-text" id="book-text">
+    <!-- Header -->
+    <header class="liv-header">
+        <div class="liv-eyebrow">
+            <span class="liv-eyebrow-dot"></span>
+            CAPÍTULO DE LEITURA
+        </div>
+        <h1 class="liv-title">{{ titulo_topico }}</h1>
+        <div class="liv-meta-row">
+            <span class="liv-tag liv-tag-{{ nivel }}">{{ nivel | upper }}</span>
+            <span class="liv-tag liv-tag-materia">{{ materia }}</span>
+            <span class="liv-tag-student">Estudante: <strong>{{ usuario.usuario }}</strong></span>
+        </div>
+    </header>
+
+    <!-- Layout: article + sidebar -->
+    <div class="liv-layout">
+
+        <!-- Article -->
+        <article class="liv-article">
+            <div class="liv-article-topbar">
+                <span class="liv-article-label">CONTEÚDO GERADO POR IA · {{ materia | upper }}</span>
+                <div class="liv-article-dots">
+                    <span class="liv-article-dot"></span>
+                    <span class="liv-article-dot"></span>
+                    <span class="liv-article-dot"></span>
+                </div>
+            </div>
+            <div class="liv-text" id="liv-book-text">
                 {{ texto_livro | replace('\n', '<br>') | safe }}
             </div>
         </article>
-        <aside class="nm-book-sidebar">
-            <div class="nm-book-sidebar-card">
-                <span class="nm-sidebar-label">Seu Status</span>
-                <div class="nm-sidebar-xp">{{ usuario.pontos }} XP</div>
-                <div class="nm-sidebar-level">Nível: <strong class="nm-level-badge-{{ usuario.nivel }}">{{ usuario.nivel|upper }}</strong></div>
-            </div>
-            <div class="nm-book-sidebar-card nm-sidebar-tip">
-                <span class="nm-sidebar-label">💡 Dica</span>
-                <p>Leia com atenção. A IA usará este conteúdo como base para gerar suas questões!</p>
-            </div>
-            <div class="nm-book-progress-card">
-                <span class="nm-sidebar-label">Progresso da Leitura</span>
-                <div class="nm-book-progress-bar">
-                    <div class="nm-book-progress-fill" id="reading-progress"></div>
+
+        <!-- Sidebar -->
+        <aside class="liv-sidebar">
+
+            <!-- Status card -->
+            <div class="liv-sidebar-card">
+                <span class="liv-sc-label">SEU STATUS</span>
+                <div class="liv-sc-stat-row">
+                    <div class="liv-sc-stat">
+                        <span class="liv-sc-stat-icon">⚡</span>
+                        <div class="liv-sc-stat-info">
+                            <span class="liv-sc-stat-key">XP TOTAL</span>
+                            <span class="liv-sc-stat-val xp">{{ usuario.pontos }} XP</span>
+                        </div>
+                    </div>
+                    <div class="liv-sc-stat">
+                        <span class="liv-sc-stat-icon">🎖️</span>
+                        <div class="liv-sc-stat-info">
+                            <span class="liv-sc-stat-key">NÍVEL ATUAL</span>
+                            <span class="liv-sc-stat-val lvl-{{ usuario.nivel }}">{{ usuario.nivel | upper }}</span>
+                        </div>
+                    </div>
                 </div>
-                <span class="nm-book-progress-pct" id="progress-pct">0%</span>
             </div>
+
+            <!-- Tip card -->
+            <div class="liv-sidebar-card liv-sidebar-tip">
+                <span class="liv-sc-label">💡 DICA</span>
+                <p class="liv-tip-text">Leia com atenção. A IA usará este conteúdo como base para gerar suas questões!</p>
+            </div>
+
+            <!-- Reading progress card -->
+            <div class="liv-sidebar-card liv-progress-card">
+                <span class="liv-sc-label">PROGRESSO DA LEITURA</span>
+                <div class="liv-progress-nums">
+                    <span class="liv-progress-pct" id="liv-progress-pct">0%</span>
+                    <span class="liv-progress-sub">LIDO</span>
+                </div>
+                <div class="liv-progress-track">
+                    <div class="liv-progress-fill" id="liv-progress-fill"></div>
+                    <div class="liv-progress-track-shine"></div>
+                </div>
+            </div>
+
         </aside>
     </div>
 
-    <div class="nm-book-cta-box">
-        <div class="nm-book-cta-content">
-            <span class="nm-book-cta-icon">⚡</span>
+    <!-- CTA box -->
+    <div class="liv-cta-box">
+        <div class="liv-cta-glow"></div>
+        <div class="liv-cta-content">
+            <span class="liv-cta-icon">⚔️</span>
             <div>
-                <h3>Pronto para o Desafio?</h3>
-                <p>Ao confirmar, a IA irá gerar uma questão inédita baseada neste capítulo.</p>
+                <div class="liv-cta-text-title">Pronto para o Desafio?</div>
+                <div class="liv-cta-text-sub">Ao confirmar, a IA irá gerar uma questão inédita baseada neste capítulo.</div>
             </div>
         </div>
-        <form method="POST">
-            <button type="submit" class="nm-btn-cta">Concluí a Leitura — Ir para as Questões ⚔️</button>
+        <form method="POST" id="liv-cta-form">
+            <button type="submit" class="liv-cta-btn">
+                CONCLUÍ A LEITURA — IR PARA AS QUESTÕES ⚡
+            </button>
         </form>
     </div>
-    <div style="margin-top:1.5rem; text-align:center;">
-        <a href="/questoes/{{ materia }}" class="nm-breadcrumb">← Desistir e voltar aos módulos</a>
+
+    <!-- Back link -->
+    <div class="liv-back-row">
+        <a href="/questoes/{{ materia }}" class="liv-back-link">← Desistir e voltar aos módulos</a>
     </div>
+
+</div>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    renderMathInElement(document.getElementById('book-text'), {
-        delimiters: [{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]
-    });
+// KaTeX render — runs immediately after KaTeX loads
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.getElementById('liv-book-text'), {
+            delimiters: [
+                { left: '$$', right: '$$', display: true  },
+                { left: '$',  right: '$',  display: false }
+            ]
+        });
+    }
 });
-function updateProgress() {
-    const el = document.getElementById('book-text');
-    const rect = el.getBoundingClientRect();
-    const total = el.offsetHeight;
-    const viewed = Math.min(window.scrollY + window.innerHeight - rect.top, total);
-    const pct = Math.max(0, Math.min(100, Math.round((viewed / total) * 100)));
-    document.getElementById('reading-progress').style.width = pct + '%';
-    document.getElementById('progress-pct').textContent = pct + '%';
-}
-window.addEventListener('scroll', updateProgress);
-updateProgress();
 </script>
-<script src="{{ url_for('static', filename='app.js') }}"></script>
 <script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+<script src="{{ url_for('static', filename='livro-fut.js') }}"></script>
 </body>
 </html>

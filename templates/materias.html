@@ -4,19 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seus Cursos — NeoMind</title>
+    <title>Matérias — NeoMind</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='materias-fut.css') }}">
 </head>
 <body class="nm-body fut-body">
-<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
-<div class="nm-blob nm-blob-1"></div>
-<div class="nm-blob nm-blob-2"></div>
 
+<!-- Particle canvas (shared with dashboard) -->
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+
+<!-- Page transition overlay -->
+<div id="mat-transition"></div>
+
+<!-- ── NAV (identical structure to dashboard) ── -->
 <nav class="fut-nav">
-    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
-    <div class="fut-nav-center"><span class="fut-nav-badge">SEUS CURSOS</span></div>
+    <div class="fut-nav-logo">
+        <span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span>
+    </div>
+    <div class="fut-nav-center">
+        <span class="fut-nav-badge">SUAS MATÉRIAS</span>
+    </div>
     <div class="fut-nav-right">
         <div class="fut-nav-user">
             <div class="fut-nav-user-dot"></div>
@@ -26,25 +35,170 @@
     </div>
 </nav>
 
-<main class="nm-main" style="position:relative;z-index:1;">
-    <div class="nm-page-header">
-        <a href="/dashboard" class="nm-breadcrumb">← Dashboard</a>
-        <h1 class="nm-page-title">Seus <em>Cursos</em></h1>
+<!-- ── MAIN CONTENT ── -->
+<main style="position:relative; z-index:1;">
+<div class="mat-page">
+
+    <!-- Header -->
+    <header class="mat-header">
+        <a href="/dashboard" class="mat-breadcrumb">
+            <span class="mat-breadcrumb-arrow">←</span> DASHBOARD
+        </a>
+        <div class="mat-title-block">
+            <div class="mat-eyebrow">
+                <span class="mat-eyebrow-dot"></span>
+                PLATAFORMA DE APRENDIZADO
+            </div>
+            <h1 class="mat-title">Suas Matérias</h1>
+            <p class="mat-subtitle">Escolha uma disciplina e suba de nível. Cada trilha é adaptada ao seu perfil.</p>
+        </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="mat-controls">
+        <div class="mat-search-wrap">
+            <input
+                class="mat-search"
+                id="mat-search"
+                type="text"
+                placeholder="BUSCAR MATÉRIA..."
+                autocomplete="off"
+            >
+            <span class="mat-search-icon">🔍</span>
+        </div>
+
+        <div class="mat-filters">
+            <span class="mat-filter-label">FILTRO</span>
+            <button class="mat-filter-pill active" data-filter="all">TODAS</button>
+            <button class="mat-filter-pill" data-filter="exatas">EXATAS</button>
+            <button class="mat-filter-pill" data-filter="humanas">HUMANAS</button>
+            <button class="mat-filter-pill" data-filter="biologicas">BIOLÓGICAS</button>
+        </div>
+
+        <div class="mat-count-badge"><span>{{ materias|length }}</span> DISCIPLINAS</div>
     </div>
-    <div class="nm-subjects-grid">
+
+    <!-- Section label -->
+    <div class="mat-section-head">
+        <span class="mat-section-label">TRILHAS DISPONÍVEIS</span>
+        <div class="mat-section-line"></div>
+    </div>
+
+    <!-- Subject cards grid -->
+    <div class="mat-grid" id="mat-grid">
+
+        {% set icons = {
+            'Biologia':   '🧬',
+            'Filosofia':  '🏛️',
+            'Física':     '⚡',
+            'Geografia':  '🌍',
+            'História':   '📜',
+            'Matemática': '∑',
+            'Português':  '📝',
+            'Química':    '⚗️'
+        } %}
+        {% set groups = {
+            'Biologia':   'biologicas',
+            'Filosofia':  'humanas',
+            'Física':     'exatas',
+            'Geografia':  'humanas',
+            'História':   'humanas',
+            'Matemática': 'exatas',
+            'Português':  'humanas',
+            'Química':    'exatas'
+        } %}
+        {% set descs = {
+            'Biologia':   'Células, genética, ecossistemas e evolução.',
+            'Filosofia':  'Pensamento crítico, ética e grandes escolas.',
+            'Física':     'Mecânica, eletrodinâmica, óptica e mais.',
+            'Geografia':  'Cartografia, climas, geopolítica e biomas.',
+            'História':   'Da antiguidade à contemporaneidade.',
+            'Matemática': 'Álgebra, geometria, funções e estatística.',
+            'Português':  'Gramática, redação, literatura e interpretação.',
+            'Química':    'Orgânica, inorgânica, físico-química e mais.'
+        } %}
+        {% set tag_map = {
+            'Biologia':   'ENEM · VESTIBULAR',
+            'Filosofia':  'ENEM · HUMANAS',
+            'Física':     'ENEM · EXATAS',
+            'Geografia':  'ENEM · HUMANAS',
+            'História':   'ENEM · HUMANAS',
+            'Matemática': 'ENEM · EXATAS',
+            'Português':  'ENEM · LINGUAGENS',
+            'Química':    'ENEM · EXATAS'
+        } %}
+
         {% for materia in materias %}
-        <a href="/questoes/{{ materia }}" class="nm-subject-card">
-            <div class="nm-subject-card-glow"></div>
-            <span class="nm-subject-icon">📚</span>
-            <h3 class="nm-subject-name">{{ materia }}</h3>
-            <span class="nm-subject-cta">Abrir Trilha →</span>
+        <a
+            href="/questoes/{{ materia }}"
+            class="mat-card"
+            data-name="{{ materia | lower }}"
+            data-group="{{ groups.get(materia, 'humanas') }}"
+            data-tags="{{ tag_map.get(materia, '') | lower }}"
+        >
+            <!-- Decorative layers -->
+            <div class="mat-card-shine"></div>
+            <div class="mat-card-glow"></div>
+
+            <!-- Top row -->
+            <div class="mat-card-top">
+                <div class="mat-card-icon-wrap">
+                    {{ icons.get(materia, '📚') }}
+                </div>
+                <span class="mat-card-num">0{{ loop.index if loop.index < 10 else loop.index }}</span>
+            </div>
+
+            <!-- Body -->
+            <div class="mat-card-body">
+                <span class="mat-card-category">DISCIPLINA · {{ groups.get(materia, '') | upper }}</span>
+                <div class="mat-card-name">{{ materia }}</div>
+                <div class="mat-card-desc">{{ descs.get(materia, 'Trilha de estudo com conteúdo adaptativo e questões comentadas.') }}</div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="mat-card-progress">
+                <div class="mat-card-progress-label">
+                    <span>PROGRESSO</span>
+                    <span class="mat-card-progress-pct">0%</span>
+                </div>
+                <div class="mat-card-track">
+                    <div class="mat-card-fill" data-pct="0"></div>
+                    <div class="mat-card-track-shine"></div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="mat-card-footer">
+                <div class="mat-card-tags">
+                    {% for tag in tag_map.get(materia, 'ENEM').split(' · ') %}
+                    <span class="mat-card-tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                <span class="mat-card-cta">
+                    ABRIR<span class="mat-card-cta-arrow"> →</span>
+                </span>
+            </div>
         </a>
         {% endfor %}
+
     </div>
-    <div style="margin-top:2rem;text-align:center;">
-        <a href="/dashboard" class="nm-breadcrumb">← Voltar ao Dashboard</a>
+
+    <!-- Empty state (shown via JS when search returns nothing) -->
+    <div class="mat-empty" id="mat-empty">
+        <div class="mat-empty-icon">🔍</div>
+        <div class="mat-empty-title">NENHUMA MATÉRIA ENCONTRADA</div>
+        <div class="mat-empty-sub">Tente outro termo ou remova os filtros.</div>
     </div>
+
+    <!-- Back link -->
+    <div class="mat-back-row">
+        <a href="/dashboard" class="mat-back-link">← VOLTAR AO DASHBOARD</a>
+    </div>
+
+</div>
 </main>
+
 <script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+<script src="{{ url_for('static', filename='materias-fut.js') }}"></script>
 </body>
 </html>

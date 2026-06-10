@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil — NeoMind</title>
+    <title>Perfil do Jogador — NeoMind</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='perfil-fut.css') }}">
 </head>
 <body class="nm-body fut-body">
+
+<!-- PARTICLE CANVAS -->
 <canvas id="fut-particles" class="fut-particles-canvas"></canvas>
 <div class="nm-blob nm-blob-1"></div>
 <div class="nm-blob nm-blob-2"></div>
 
+<!-- TRANSITION OVERLAY -->
+<div class="fut-transition-overlay" id="fut-transition"></div>
+
+<!-- NAV -->
 <nav class="fut-nav">
     <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
-    <div class="fut-nav-center"><span class="fut-nav-badge">PERFIL DO JOGADOR</span></div>
+    <div class="fut-nav-center"><span class="fut-nav-badge" id="pfut-nav-badge">PERFIL DO JOGADOR</span></div>
     <div class="fut-nav-right">
         <div class="fut-nav-user">
             <div class="fut-nav-user-dot"></div>
@@ -25,92 +32,247 @@
     </div>
 </nav>
 
-<div class="nm-status-bar">
-    <span class="nm-status-dot"></span>
-    <span class="nm-status-text">PERFIL DO JOGADOR · GERENCIAR CONTA</span>
+<!-- STATUS BAR -->
+<div class="pfut-status-bar">
+    <span class="pfut-status-dot"></span>
+    PERFIL DO JOGADOR · GERENCIAR CONTA
 </div>
 
-<main class="nm-main" style="position:relative;z-index:1;">
-    <div class="nm-page-header">
-        <a href="/dashboard" class="nm-breadcrumb">← Dashboard</a>
-        <h1 class="nm-page-title">Perfil do <em>Jogador</em></h1>
-    </div>
+<!-- MAIN WRAPPER -->
+<div class="pfut-wrapper">
 
-    <div class="nm-profile-layout">
-        <!-- PLAYER CARD -->
-        <div class="nm-player-card-big">
-            <div class="nm-player-card-bg"></div>
-            <div class="nm-player-avatar-wrap">
+    <!-- PAGE HEADER -->
+    <header class="pfut-page-header">
+        <a href="/dashboard" class="pfut-breadcrumb">← DASHBOARD</a>
+        <div class="pfut-eyebrow">
+            <span class="pfut-eyebrow-dot"></span>
+            CONFIGURAÇÕES DA CONTA
+            <span class="pfut-eyebrow-line"></span>
+        </div>
+        <h1 class="pfut-page-title">Perfil do <em>Jogador</em></h1>
+    </header>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="pfut-flash pfut-flash-{{ category }}">
+            <span class="pfut-flash-icon">{% if category == 'success' %}✓{% else %}⚠{% endif %}</span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- MAIN LAYOUT -->
+    <div class="pfut-layout">
+
+        <!-- ══ LEFT: PLAYER CARD ══ -->
+        <aside class="pfut-player-card" id="pfut-player-card">
+            <div class="pfut-card-bg"></div>
+            <div class="pfut-card-shine"></div>
+
+            <!-- AVATAR -->
+            <div class="pfut-avatar-wrap" id="pfut-avatar-wrap">
                 {% if usuario.foto and usuario.foto != 'default.png' %}
-                <img src="{{ url_for('static', filename='uploads/' + usuario.foto) }}" alt="Avatar" class="nm-player-avatar">
+                <img src="{{ url_for('static', filename='uploads/' + usuario.foto) }}" alt="Avatar" class="pfut-avatar" id="pfut-avatar">
                 {% else %}
-                <div class="nm-player-avatar-placeholder">{{ usuario.usuario[0]|upper }}</div>
+                <div class="pfut-avatar-placeholder" id="pfut-avatar">{{ usuario.usuario[0]|upper }}</div>
                 {% endif %}
-                <span class="nm-player-level-ring nm-ring-{{ usuario.nivel }}"></span>
+                <span class="pfut-level-ring pfut-ring-{{ usuario.nivel }}"></span>
+                <div class="pfut-avatar-glow pfut-glow-{{ usuario.nivel }}"></div>
             </div>
-            <h2 class="nm-player-username">@{{ usuario.usuario }}</h2>
-            <span class="nm-player-interest-badge">{{ usuario.interesse|capitalize }}</span>
-            <div class="nm-player-stats-row">
-                <div class="nm-pstat">
-                    <span class="nm-pstat-val">{{ usuario.pontos }}</span>
-                    <span class="nm-pstat-label">XP Total</span>
-                </div>
-                <div class="nm-pstat-div"></div>
-                <div class="nm-pstat">
-                    <span class="nm-pstat-val nm-level-badge-{{ usuario.nivel }}">{{ usuario.nivel|upper }}</span>
-                    <span class="nm-pstat-label">Nível</span>
-                </div>
-            </div>
-            <div class="nm-xp-bar-wrap">
-                {% if usuario.nivel == 'novato' %}
-                {% set pct = (usuario.pontos / 50 * 100)|int %}
-                <div class="nm-xp-bar-labels"><span>Novato</span><span>50 XP → Inter</span></div>
-                {% elif usuario.nivel == 'intermediario' %}
-                {% set pct = ((usuario.pontos - 50) / 50 * 100)|int %}
-                <div class="nm-xp-bar-labels"><span>Intermediário</span><span>100 XP → Pro</span></div>
-                {% else %}
-                {% set pct = 100 %}
-                <div class="nm-xp-bar-labels"><span>PRO</span><span>Nível máximo!</span></div>
-                {% endif %}
-                <div class="nm-xp-bar">
-                    <div class="nm-xp-bar-fill"></div>
-                </div>
-            </div>
-            <div class="nm-player-bio-box">
-                <span class="nm-sidebar-label">💬 Recado</span>
-                <p>"{{ usuario.recado }}"</p>
-            </div>
-        </div>
 
-        <!-- EDIT FORM -->
-        <div class="nm-edit-form-card">
-            <h3 class="nm-edit-form-title">Editar Perfil</h3>
-            <form method="POST" enctype="multipart/form-data">
-                <div class="nm-input-group">
-                    <label>Foto de Perfil</label>
-                    <label for="foto" class="nm-file-upload-btn">📸 Escolher Imagem</label>
-                    <input type="file" name="foto" id="foto" accept="image/*" onchange="showFile(this)" style="display:none;">
-                    <span id="file-preview" class="nm-file-preview">Nenhum arquivo selecionado</span>
+            <!-- IDENTITY -->
+            <div class="pfut-identity">
+                <h2 class="pfut-username">@{{ usuario.usuario }}</h2>
+                <span class="pfut-interest-badge">
+                    {% if usuario.interesse == 'animes' %}⚔️{% elif usuario.interesse == 'jogos' %}🎮{% else %}⚽{% endif %}
+                    {{ usuario.interesse|capitalize }}
+                </span>
+            </div>
+
+            <!-- STATS ROW -->
+            <div class="pfut-stats-row">
+                <div class="pfut-stat">
+                    <span class="pfut-stat-val pfut-stat-xp">{{ usuario.pontos }}</span>
+                    <span class="pfut-stat-label">XP TOTAL</span>
                 </div>
-                <div class="nm-input-group">
-                    <label for="recado">Bio / Recado</label>
-                    <textarea name="recado" id="recado" rows="3" class="nm-textarea" placeholder="Escreva algo sobre você..." required>{{ usuario.recado }}</textarea>
+                <div class="pfut-stat-divider"></div>
+                <div class="pfut-stat">
+                    <span class="pfut-stat-val pfut-stat-val-{{ usuario.nivel }}">
+                        {% if usuario.nivel == 'novato' %}NOV{% elif usuario.nivel == 'intermediario' %}INT{% else %}PRO{% endif %}
+                    </span>
+                    <span class="pfut-stat-label">NÍVEL</span>
                 </div>
-                <div class="nm-input-group">
-                    <label for="interesse">Universo Favorito</label>
-                    <select name="interesse" id="interesse" class="nm-select" required>
-                        <option value="animes" {% if usuario.interesse == 'animes' %}selected{% endif %}>⚔️ Animes</option>
-                        <option value="jogos" {% if usuario.interesse == 'jogos' %}selected{% endif %}>🎮 Games</option>
-                        <option value="esportes" {% if usuario.interesse == 'esportes' %}selected{% endif %}>⚽ Esportes</option>
-                    </select>
+                <div class="pfut-stat-divider"></div>
+                <div class="pfut-stat">
+                    <span class="pfut-stat-val pfut-stat-rank">
+                        {% if usuario.nivel == 'novato' %}🥉{% elif usuario.nivel == 'intermediario' %}🥈{% else %}🥇{% endif %}
+                    </span>
+                    <span class="pfut-stat-label">RANK</span>
                 </div>
-                <button type="submit" class="nm-btn-cta" style="width:100%;margin-top:0.5rem;">Salvar Alterações ✓</button>
+            </div>
+
+            <!-- XP PROGRESS BAR -->
+            <div class="pfut-xp-wrap">
+                {% if usuario.nivel == 'novato' %}
+                    {% set pct = (usuario.pontos / 50 * 100)|int %}
+                    {% set pct = [pct, 100]|min %}
+                    <div class="pfut-xp-labels"><span>NOVATO</span><span>50 XP → INTER</span></div>
+                {% elif usuario.nivel == 'intermediario' %}
+                    {% set pct = ((usuario.pontos - 50) / 50 * 100)|int %}
+                    {% set pct = [pct, 100]|min %}
+                    <div class="pfut-xp-labels"><span>INTERMEDIÁRIO</span><span>100 XP → PRO</span></div>
+                {% else %}
+                    {% set pct = 100 %}
+                    <div class="pfut-xp-labels"><span>PRO</span><span>🏆 NÍVEL MÁXIMO</span></div>
+                {% endif %}
+                <div class="pfut-xp-track">
+                    <div class="pfut-xp-fill" id="pfut-xp-fill" data-pct="{{ pct }}"></div>
+                    <div class="pfut-xp-shine"></div>
+                </div>
+            </div>
+
+            <!-- MINI STATS CARDS -->
+            <div class="pfut-mini-stats">
+                <div class="pfut-mini-stat pfut-ms-blue">
+                    <span class="pfut-ms-icon">📚</span>
+                    <div class="pfut-ms-info">
+                        <span class="pfut-ms-label">UNIVERSO</span>
+                        <span class="pfut-ms-val">{{ usuario.interesse|capitalize }}</span>
+                    </div>
+                </div>
+                <div class="pfut-mini-stat pfut-ms-purple">
+                    <span class="pfut-ms-icon">⚡</span>
+                    <div class="pfut-ms-info">
+                        <span class="pfut-ms-label">STATUS</span>
+                        <span class="pfut-ms-val">ONLINE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BIO BOX -->
+            <div class="pfut-bio-box">
+                <span class="pfut-bio-label">💬 RECADO</span>
+                <p class="pfut-bio-text">"{{ usuario.recado }}"</p>
+            </div>
+
+            <!-- QUICK ACTIONS -->
+            <div class="pfut-quick-actions">
+                <a href="/dashboard" class="pfut-quick-btn pfut-qb-blue">
+                    <span>🏠</span> DASHBOARD
+                </a>
+                <a href="/historico" class="pfut-quick-btn pfut-qb-purple">
+                    <span>📊</span> HISTÓRICO
+                </a>
+            </div>
+        </aside>
+
+        <!-- ══ RIGHT: EDIT FORM ══ -->
+        <section class="pfut-form-card" id="pfut-form-card">
+            <div class="pfut-form-card-bg"></div>
+
+            <h3 class="pfut-form-title">Editar Perfil</h3>
+            <p class="pfut-form-subtitle">CONFIGURAÇÕES DO JOGADOR <span class="pfut-form-subtitle-line"></span></p>
+
+            <form method="POST" enctype="multipart/form-data" id="pfut-form">
+
+                <!-- FOTO SECTION -->
+                <div class="pfut-form-section">
+                    <div class="pfut-section-header">
+                        <span class="pfut-section-num">01</span>
+                        <span class="pfut-section-title">FOTO DE PERFIL</span>
+                        <span class="pfut-section-line"></span>
+                    </div>
+                    <div class="pfut-input-group">
+                        <label class="pfut-input-label">IMAGEM DO AVATAR</label>
+                        <div class="pfut-file-zone" id="pfut-file-zone">
+                            <label for="foto" class="pfut-file-btn" id="pfut-file-label">
+                                <span class="pfut-file-icon">📸</span>
+                                <span class="pfut-file-text">ESCOLHER IMAGEM</span>
+                            </label>
+                            <input type="file" name="foto" id="foto" accept="image/*" onchange="showFile(this)" style="display:none;">
+                            <span id="file-preview" class="pfut-file-preview">Nenhum arquivo selecionado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BIO SECTION -->
+                <div class="pfut-form-section">
+                    <div class="pfut-section-header">
+                        <span class="pfut-section-num">02</span>
+                        <span class="pfut-section-title">BIO / RECADO</span>
+                        <span class="pfut-section-line"></span>
+                    </div>
+                    <div class="pfut-input-group">
+                        <label for="recado" class="pfut-input-label">SEU RECADO PARA O MUNDO</label>
+                        <textarea name="recado" id="recado" rows="4" class="pfut-textarea" placeholder="Escreva algo sobre você..." required>{{ usuario.recado }}</textarea>
+                        <span class="pfut-char-hint">Dica: seja criativo e único</span>
+                    </div>
+                </div>
+
+                <!-- INTERESSE SECTION -->
+                <div class="pfut-form-section">
+                    <div class="pfut-section-header">
+                        <span class="pfut-section-num">03</span>
+                        <span class="pfut-section-title">UNIVERSO FAVORITO</span>
+                        <span class="pfut-section-line"></span>
+                    </div>
+                    <div class="pfut-input-group">
+                        <label for="interesse" class="pfut-input-label">ESCOLHA SUA ÁREA DE INTERESSE</label>
+                        <div class="pfut-interest-grid">
+                            <label class="pfut-interest-option {% if usuario.interesse == 'animes' %}pfut-io-active{% endif %}">
+                                <input type="radio" name="interesse" value="animes" {% if usuario.interesse == 'animes' %}checked{% endif %} style="display:none;">
+                                <span class="pfut-io-icon">⚔️</span>
+                                <span class="pfut-io-label">ANIMES</span>
+                            </label>
+                            <label class="pfut-interest-option {% if usuario.interesse == 'jogos' %}pfut-io-active{% endif %}">
+                                <input type="radio" name="interesse" value="jogos" {% if usuario.interesse == 'jogos' %}checked{% endif %} style="display:none;">
+                                <span class="pfut-io-icon">🎮</span>
+                                <span class="pfut-io-label">GAMES</span>
+                            </label>
+                            <label class="pfut-interest-option {% if usuario.interesse == 'esportes' %}pfut-io-active{% endif %}">
+                                <input type="radio" name="interesse" value="esportes" {% if usuario.interesse == 'esportes' %}checked{% endif %} style="display:none;">
+                                <span class="pfut-io-icon">⚽</span>
+                                <span class="pfut-io-label">ESPORTES</span>
+                            </label>
+                        </div>
+                        <!-- Hidden select fallback for compatibility -->
+                        <select name="interesse" id="interesse" class="pfut-select pfut-select-hidden" required>
+                            <option value="animes" {% if usuario.interesse == 'animes' %}selected{% endif %}>⚔️ Animes</option>
+                            <option value="jogos" {% if usuario.interesse == 'jogos' %}selected{% endif %}>🎮 Games</option>
+                            <option value="esportes" {% if usuario.interesse == 'esportes' %}selected{% endif %}>⚽ Esportes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SAVE BUTTON -->
+                <button type="submit" class="pfut-btn-save" id="pfut-btn-save">
+                    <span class="pfut-btn-shine"></span>
+                    <span class="pfut-btn-content">
+                        <span class="pfut-btn-icon-wrap">✓</span>
+                        SALVAR ALTERAÇÕES
+                    </span>
+                </button>
+
             </form>
-        </div>
-    </div>
-</main>
-<script>function showFile(input) { document.getElementById('file-preview').textContent = input.files[0]?.name || 'Nenhum arquivo'; }</script>
+        </section>
+
+    </div><!-- /.pfut-layout -->
+
+</div><!-- /.pfut-wrapper -->
+
+<script>
+function showFile(input) {
+    const preview = document.getElementById('file-preview');
+    const name = input.files[0]?.name || 'Nenhum arquivo';
+    preview.textContent = name;
+    preview.style.color = 'rgba(0,212,255,0.6)';
+}
+</script>
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 <script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+<script src="{{ url_for('static', filename='perfil-fut.js') }}"></script>
 </body>
 </html>

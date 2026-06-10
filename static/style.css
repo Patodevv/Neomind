@@ -1,11 +1,6 @@
-/* ═══════════════════════════════════════════════
-   NEOMIND — AAA GAME DESIGN SYSTEM
-   Full redesign by Claude — v3.0 FUT PALETTE
-   ═══════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap');
 
-/* ── TOKENS ── */
 :root {
     --bg: #04060e;
     --surface: #080c18;
@@ -40,12 +35,8 @@
     --radius-lg: 14px;
     --nav-h: 56px;
 }
-
-/* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-
-/* ── BASE BODY ── */
 .nm-body {
      background-image: url("/static/uploads/fundo.png") !important;
     background-attachment: fixed !important;
@@ -55,14 +46,12 @@ html { scroll-behavior: smooth; }
     overflow-x: hidden;
 }
 
-/* ── NOISE OVERLAY ── */
 .nm-noise {
     position: fixed; inset: 0; pointer-events: none; z-index: 999;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
     opacity: 0.5;
 }
 
-/* ── AMBIENT BLOBS ── */
 .nm-blob {
     position: fixed; border-radius: 50%;
     filter: blur(140px); pointer-events: none; z-index: 0;
@@ -91,7 +80,6 @@ html { scroll-behavior: smooth; }
     to   { transform: translate(30px, 20px) scale(1.05); }
 }
 
-/* ── NAVIGATION ── */
 .nm-nav {
     position: sticky; top: 0; z-index: 100;
     height: var(--nav-h);
@@ -162,8 +150,6 @@ html { scroll-behavior: smooth; }
     .nm-nav-center { display: none; }
     .nm-nav { padding: 0 1rem; }
 }
-
-/* ── STATUS BAR ── */
 .nm-status-bar {
     position: relative; z-index: 1;
     display: flex; align-items: center; gap: 0.75rem;
@@ -196,7 +182,6 @@ html { scroll-behavior: smooth; }
 }
 .nm-status-text { color: rgba(0,212,255,0.45); }
 
-/* ── MAIN LAYOUT ── */
 .nm-main {
     position: relative; z-index: 1;
     max-width: 1200px;
@@ -205,7 +190,6 @@ html { scroll-behavior: smooth; }
 }
 @media(max-width: 700px) { .nm-main { padding: 2rem 1rem 4rem; } }
 
-/* ── PAGE HEADER ── */
 .nm-page-header { margin-bottom: 2.5rem; }
 .nm-breadcrumb {
     display: inline-flex; align-items: center; gap: 0.4rem;
@@ -233,8 +217,6 @@ html { scroll-behavior: smooth; }
     font-size: 1rem; color: var(--text-muted);
     max-width: 500px; line-height: 1.6;
 }
-
-/* ── SECTION TITLE ── */
 .nm-section-title {
     font-family: var(--font-display);
     font-size: 1.4rem; font-weight: 700;
@@ -251,7 +233,6 @@ html { scroll-behavior: smooth; }
     font-family: var(--font-display);
 }
 
-/* ── DASHBOARD HERO ── */
 .nm-hero {
     display: flex; align-items: center; justify-content: space-between;
     gap: 2rem; margin-bottom: 2.5rem;
@@ -319,7 +300,6 @@ html { scroll-behavior: smooth; }
 }
 .nm-hero-card-xp { font-size: 0.7rem; color: var(--text-dim); }
 
-/* ── STATS ROW ── */
 .nm-stats-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -354,7 +334,6 @@ html { scroll-behavior: smooth; }
 }
 .nm-stat-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 
-/* ── MAIN GRID ── */
 .nm-grid {
     display: grid;
     grid-template-columns: 1fr 320px;
@@ -364,7 +343,6 @@ html { scroll-behavior: smooth; }
 }
 @media(max-width: 960px) { .nm-grid { grid-template-columns: 1fr; } }
 
-/* ── ACTION CARDS ── */
 .nm-action-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -434,7 +412,6 @@ html { scroll-behavior: smooth; }
 }
 .nm-action-card:hover .nm-action-arrow { color: var(--green); transform: translateX(4px); }
 
-/* ── SIDE PANEL ── */
 .nm-side-panel { display: flex; flex-direction: column; gap: 1rem; }
 
 .nm-levels-card {
@@ -511,7 +488,6 @@ html { scroll-behavior: smooth; }
 }
 .nm-tips-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
 
-/* ── HOW IT WORKS ── */
 .nm-howto {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -542,7 +518,6 @@ html { scroll-behavior: smooth; }
 }
 @media(max-width: 700px) { .nm-step-arrow { display: none; } }
 
-/* ── SUBJECTS GRID ── */
 .nm-subjects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -581,7 +556,6 @@ html { scroll-behavior: smooth; }
 }
 .nm-subject-card:hover .nm-subject-cta { color: var(--green); }
 
-/* ── PLAYER BANNER ── */
 .nm-player-banner {
     display: flex; align-items: center; gap: 1.5rem;
     background: var(--surface2);
@@ -610,7 +584,6 @@ html { scroll-behavior: smooth; }
 .nm-level-badge-intermediario { color: var(--purple); }
 .nm-level-badge-pro         { color: var(--gold); }
 
-/* ── TOPICS LIST ── */
 .nm-topics-list { display: flex; flex-direction: column; gap: 1.25rem; }
 .nm-topic-card {
     background: var(--surface2);
@@ -674,7 +647,6 @@ html { scroll-behavior: smooth; }
     opacity: 0.35; cursor: not-allowed; pointer-events: none;
 }
 
-/* ── BOOK LAYOUT ── */
 .nm-book-layout { max-width: 1100px; }
 .nm-book-header { margin-bottom: 2rem; }
 .nm-book-title {
@@ -767,8 +739,6 @@ html { scroll-behavior: smooth; }
     transition: width 0.3s ease;
 }
 .nm-book-progress-pct { font-size: 0.72rem; color: var(--text-muted); }
-
-/* CTA Box */
 .nm-book-cta-box {
     background: var(--surface2);
     border: 1px solid rgba(0,212,255,0.15);
@@ -831,8 +801,6 @@ html { scroll-behavior: smooth; }
     border-color: rgba(0,212,255,0.35);
     color: var(--green);
 }
-
-/* ── QUIZ LAYOUT ── */
 .nm-quiz-layout { max-width: 760px; margin: 0 auto; }
 .nm-quiz-header { margin-bottom: 1.5rem; text-align: center; }
 .nm-quiz-meta { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
@@ -925,8 +893,6 @@ html { scroll-behavior: smooth; }
     transform: translateY(-1px);
     box-shadow: 0 8px 30px var(--green-glow);
 }
-
-/* RESULT PANEL */
 .nm-result-panel {
     border-radius: var(--radius-lg);
     padding: 1.75rem; margin-bottom: 1.5rem;
@@ -975,8 +941,6 @@ html { scroll-behavior: smooth; }
     color: var(--green);
     background: rgba(0,212,255,0.08);
 }
-
-/* ── PROFILE LAYOUT ── */
 .nm-profile-layout {
     display: grid;
     grid-template-columns: 340px 1fr;
@@ -1105,8 +1069,6 @@ html { scroll-behavior: smooth; }
     box-shadow: 0 0 0 3px rgba(139,92,246,0.08);
 }
 .nm-select option { background: #0e1220; }
-
-/* ── HISTORY ── */
 .nm-history-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1156,7 +1118,6 @@ html { scroll-behavior: smooth; }
 .nm-result-win-text  { color: #06ffd4; }
 .nm-result-lose-text { color: var(--purple); }
 
-/* ── EMPTY STATE ── */
 .nm-empty-state {
     text-align: center; background: var(--surface2);
     border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -1166,7 +1127,6 @@ html { scroll-behavior: smooth; }
 .nm-empty-state h3 { font-family: var(--font-display); font-size: 1.4rem; color: var(--text); }
 .nm-empty-state p  { font-size: 0.88rem; color: var(--text-muted); max-width: 340px; }
 
-/* ── TAG BADGE GENERAL ── */
 .nm-tag-badge {
     font-size: 0.62rem; letter-spacing: 2px;
     padding: 3px 10px; border-radius: 2px;
@@ -1176,7 +1136,6 @@ html { scroll-behavior: smooth; }
     white-space: nowrap;
 }
 
-/* ── PLAYER BADGE ── */
 .nm-player-level {
     font-family: var(--font-display);
     font-size: 0.8rem; font-weight: 700;
@@ -1195,18 +1154,15 @@ html { scroll-behavior: smooth; }
     border: 1px solid rgba(232,200,74,0.3);
 }
 
-/* ── KaTeX overrides ── */
 .katex { font-size: 1em; color: var(--green); }
 .katex-display { margin: 1rem 0; }
 
-/* ── UTILITY ── */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
-/* ── SCROLL BAR ── */
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.2); }
 
-/* ── SELECTION ── */
 ::selection { background: rgba(0,212,255,0.15); color: var(--text); }

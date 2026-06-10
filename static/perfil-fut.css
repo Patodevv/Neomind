@@ -1,0 +1,640 @@
+/* ═══════════════════════════════════════════════════════════════
+   perfil-fut.css — NeoMind Perfil Premium Interface v2.0
+   Identidade visual fiel a dashboard-fut.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── STATUS BAR ── */
+.pfut-status-bar {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.5rem 2rem;
+    background: rgba(0,212,255,0.03);
+    border-bottom: 1px solid rgba(0,212,255,0.08);
+    font-family: var(--font-display);
+    font-size: 0.62rem; letter-spacing: 3px;
+    color: rgba(0,212,255,0.45);
+    overflow: hidden;
+}
+.pfut-status-bar::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--fut-neon-blue), var(--fut-neon-purple));
+}
+.pfut-status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--fut-neon-cyan);
+    box-shadow: 0 0 8px var(--fut-neon-cyan);
+    animation: statusPulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ── WRAPPER ── */
+.pfut-wrapper {
+    position: relative; z-index: 1;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+}
+@media (max-width: 700px) { .pfut-wrapper { padding: 1.5rem 1rem 4rem; } }
+
+/* ── PAGE HEADER ── */
+.pfut-page-header {
+    margin-bottom: 2.25rem;
+    animation: futSlideIn 0.6s ease 0.1s both;
+}
+.pfut-breadcrumb {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.72rem; color: rgba(255,255,255,0.28);
+    font-family: var(--font-display); letter-spacing: 2px;
+    text-decoration: none; transition: color 0.2s;
+    margin-bottom: 0.75rem; display: block;
+}
+.pfut-breadcrumb:hover { color: var(--fut-neon-blue); }
+.pfut-eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.65rem; letter-spacing: 4px;
+    color: rgba(0,212,255,0.5);
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.pfut-eyebrow-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--fut-neon-blue);
+    box-shadow: 0 0 6px var(--fut-neon-blue);
+    flex-shrink: 0;
+}
+.pfut-eyebrow-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(0,212,255,0.2), transparent);
+}
+.pfut-page-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700; line-height: 1.05; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 40%, var(--fut-neon-blue) 70%, var(--fut-neon-purple) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(0,212,255,0.25));
+}
+.pfut-page-title em { font-style: normal; }
+
+/* ── FLASH MESSAGES ── */
+.pfut-flash {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1.5rem; padding: 0.9rem 1.25rem;
+    border-radius: 6px; font-family: var(--font-display);
+    font-size: 0.8rem; letter-spacing: 1px;
+    animation: futSlideIn 0.4s ease both;
+    position: relative; overflow: hidden;
+}
+.pfut-flash::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: currentColor;
+}
+.pfut-flash-success {
+    background: rgba(6,255,212,0.05);
+    border: 1px solid rgba(6,255,212,0.2);
+    color: var(--fut-neon-cyan);
+}
+.pfut-flash-error, .pfut-flash-danger {
+    background: rgba(252,92,125,0.05);
+    border: 1px solid rgba(252,92,125,0.2);
+    color: #fc5c7d;
+}
+.pfut-flash-icon { font-size: 1rem; flex-shrink: 0; }
+
+/* ── LAYOUT GRID ── */
+.pfut-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+@media (max-width: 900px) { .pfut-layout { grid-template-columns: 1fr; } }
+
+/* ═══════════════════════════════════════════════════════════════
+   PLAYER CARD (LEFT COLUMN)
+═══════════════════════════════════════════════════════════════ */
+.pfut-player-card {
+    position: relative;
+    background: rgba(8,12,24,0.88);
+    border: 1px solid rgba(0,212,255,0.12);
+    border-radius: 14px;
+    padding: 2.25rem 1.75rem 1.75rem;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: 1rem;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    box-shadow:
+        0 4px 40px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    animation: futSlideLeft 0.7s ease 0.2s both;
+    transition: box-shadow 0.35s, border-color 0.35s;
+}
+.pfut-player-card:hover {
+    border-color: rgba(0,212,255,0.2);
+    box-shadow:
+        0 8px 60px rgba(0,0,0,0.5),
+        0 0 50px rgba(0,212,255,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+}
+/* Top shine line */
+.pfut-player-card::before {
+    content: '';
+    position: absolute; top: 0; left: -50%; right: -50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.35), rgba(139,92,246,0.35), transparent);
+}
+.pfut-card-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.1) 0%, transparent 65%),
+        radial-gradient(ellipse at 50% 100%, rgba(0,212,255,0.04) 0%, transparent 55%);
+}
+.pfut-card-shine {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(
+        135deg,
+        transparent 30%,
+        rgba(0,212,255,0.03) 45%,
+        rgba(255,255,255,0.04) 50%,
+        rgba(0,212,255,0.03) 55%,
+        transparent 70%
+    );
+    animation: pfutCardShine 5s ease-in-out infinite;
+}
+@keyframes pfutCardShine {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+/* ── AVATAR ── */
+.pfut-avatar-wrap {
+    position: relative; width: 112px; height: 112px;
+    flex-shrink: 0; margin-bottom: 0.25rem;
+    transition: transform 0.3s ease;
+}
+.pfut-player-card:hover .pfut-avatar-wrap { transform: scale(1.04); }
+.pfut-avatar {
+    width: 112px; height: 112px; border-radius: 50%;
+    object-fit: cover;
+    border: 2.5px solid rgba(0,212,255,0.2);
+    position: relative; z-index: 1;
+    display: block;
+}
+.pfut-avatar-placeholder {
+    width: 112px; height: 112px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(139,92,246,0.5), rgba(0,212,255,0.3));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 3rem; font-weight: 700; color: #fff;
+    border: 2.5px solid rgba(139,92,246,0.35);
+    position: relative; z-index: 1;
+}
+.pfut-level-ring {
+    position: absolute; inset: -6px; border-radius: 50%;
+    border: 2px solid transparent; pointer-events: none; z-index: 2;
+    animation: pfutRingPulse 3s ease-in-out infinite;
+}
+@keyframes pfutRingPulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.04); }
+}
+.pfut-ring-novato        { border-color: var(--fut-neon-blue);   box-shadow: 0 0 16px rgba(0,212,255,0.4); }
+.pfut-ring-intermediario { border-color: var(--fut-neon-purple); box-shadow: 0 0 16px rgba(139,92,246,0.45); }
+.pfut-ring-pro           { border-color: var(--fut-gold);        box-shadow: 0 0 16px rgba(232,200,74,0.45); }
+
+.pfut-avatar-glow {
+    position: absolute; inset: -14px; border-radius: 50%;
+    pointer-events: none; z-index: 0; opacity: 0.25;
+    animation: pfutGlowPulse 3s ease-in-out infinite;
+}
+@keyframes pfutGlowPulse {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(1.06); }
+}
+.pfut-glow-novato        { background: radial-gradient(circle, rgba(0,212,255,0.5), transparent 70%); }
+.pfut-glow-intermediario { background: radial-gradient(circle, rgba(139,92,246,0.5), transparent 70%); }
+.pfut-glow-pro           { background: radial-gradient(circle, rgba(232,200,74,0.5), transparent 70%); }
+
+/* ── IDENTITY ── */
+.pfut-identity {
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    position: relative; z-index: 1;
+}
+.pfut-username {
+    font-family: var(--font-display);
+    font-size: 1.5rem; font-weight: 700; color: #fff;
+    letter-spacing: 1.5px;
+}
+.pfut-interest-badge {
+    font-family: var(--font-display);
+    font-size: 0.63rem; letter-spacing: 2px;
+    padding: 4px 14px; border-radius: 2px;
+    background: rgba(139,92,246,0.1); color: #a882ff;
+    border: 1px solid rgba(139,92,246,0.25);
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+/* ── STATS ROW ── */
+.pfut-stats-row {
+    display: flex; align-items: center; gap: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: rgba(0,212,255,0.03);
+    border: 1px solid rgba(0,212,255,0.08);
+    border-radius: 8px; width: 100%;
+    position: relative; z-index: 1;
+    transition: border-color 0.25s;
+}
+.pfut-stats-row:hover { border-color: rgba(0,212,255,0.15); }
+.pfut-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+.pfut-stat-val {
+    font-family: var(--font-display);
+    font-size: 1.4rem; font-weight: 700; color: #fff;
+    line-height: 1;
+}
+.pfut-stat-xp           { color: var(--fut-neon-blue); text-shadow: 0 0 12px rgba(0,212,255,0.35); }
+.pfut-stat-val-novato   { color: var(--fut-neon-blue); text-shadow: 0 0 12px rgba(0,212,255,0.35); }
+.pfut-stat-val-intermediario { color: var(--fut-neon-purple); text-shadow: 0 0 12px rgba(139,92,246,0.4); }
+.pfut-stat-val-pro      { color: var(--fut-gold); text-shadow: 0 0 12px rgba(232,200,74,0.45); }
+.pfut-stat-rank         { font-size: 1.3rem; }
+.pfut-stat-label {
+    font-family: var(--font-display);
+    font-size: 0.56rem; letter-spacing: 2px; color: rgba(255,255,255,0.28);
+}
+.pfut-stat-divider {
+    width: 1px; height: 32px;
+    background: rgba(0,212,255,0.1);
+    flex-shrink: 0;
+}
+
+/* ── XP BAR ── */
+.pfut-xp-wrap { width: 100%; position: relative; z-index: 1; }
+.pfut-xp-labels {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-display);
+    font-size: 0.58rem; letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.22); margin-bottom: 0.45rem;
+}
+.pfut-xp-track {
+    position: relative; height: 5px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 100px; overflow: hidden;
+}
+.pfut-xp-fill {
+    height: 100%; width: 0;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 8px rgba(0,212,255,0.5);
+}
+.pfut-xp-shine {
+    position: absolute; top: 0; left: 0; height: 100%; width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: pfutProgressShine 2.2s ease-in-out infinite;
+}
+@keyframes pfutProgressShine {
+    from { transform: translateX(-150%); }
+    to   { transform: translateX(400%); }
+}
+
+/* ── MINI STATS ── */
+.pfut-mini-stats {
+    display: flex; gap: 0.6rem; width: 100%;
+    position: relative; z-index: 1;
+}
+.pfut-mini-stat {
+    display: flex; align-items: center; gap: 0.6rem;
+    flex: 1; padding: 0.65rem 0.75rem;
+    border-radius: 6px; border: 1px solid transparent;
+    transition: all 0.25s;
+}
+.pfut-mini-stat:hover { transform: translateY(-2px); }
+.pfut-ms-blue  { background: rgba(0,212,255,0.04); border-color: rgba(0,212,255,0.1); }
+.pfut-ms-blue:hover  { border-color: rgba(0,212,255,0.25); }
+.pfut-ms-purple{ background: rgba(139,92,246,0.04); border-color: rgba(139,92,246,0.1); }
+.pfut-ms-purple:hover{ border-color: rgba(139,92,246,0.25); }
+.pfut-ms-icon { font-size: 1.1rem; flex-shrink: 0; }
+.pfut-ms-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.pfut-ms-label {
+    font-family: var(--font-display);
+    font-size: 0.52rem; letter-spacing: 2px; color: rgba(255,255,255,0.25);
+}
+.pfut-ms-val {
+    font-family: var(--font-display);
+    font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.75);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── BIO BOX ── */
+.pfut-bio-box {
+    width: 100%;
+    background: rgba(0,212,255,0.02);
+    border: 1px solid rgba(0,212,255,0.08);
+    border-radius: 8px; padding: 1rem 1.1rem;
+    text-align: left; position: relative; z-index: 1;
+    transition: border-color 0.25s;
+}
+.pfut-bio-box:hover { border-color: rgba(0,212,255,0.16); }
+.pfut-bio-label {
+    font-family: var(--font-display);
+    font-size: 0.56rem; letter-spacing: 2px;
+    color: rgba(0,212,255,0.4); display: block; margin-bottom: 0.5rem;
+}
+.pfut-bio-text {
+    font-size: 0.86rem; color: rgba(255,255,255,0.38);
+    font-style: italic; line-height: 1.6; margin: 0;
+}
+
+/* ── QUICK ACTIONS ── */
+.pfut-quick-actions {
+    display: flex; gap: 0.6rem; width: 100%;
+    position: relative; z-index: 1;
+}
+.pfut-quick-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    flex: 1; justify-content: center;
+    padding: 0.7rem 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 1.5px;
+    text-decoration: none; border-radius: 4px; border: 1px solid transparent;
+    transition: all 0.22s; cursor: pointer;
+}
+.pfut-qb-blue {
+    background: rgba(0,212,255,0.06);
+    border-color: rgba(0,212,255,0.15);
+    color: var(--fut-neon-blue);
+}
+.pfut-qb-blue:hover {
+    background: rgba(0,212,255,0.12);
+    border-color: rgba(0,212,255,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,212,255,0.15);
+}
+.pfut-qb-purple {
+    background: rgba(139,92,246,0.06);
+    border-color: rgba(139,92,246,0.15);
+    color: #a882ff;
+}
+.pfut-qb-purple:hover {
+    background: rgba(139,92,246,0.12);
+    border-color: rgba(139,92,246,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(139,92,246,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EDIT FORM CARD (RIGHT COLUMN)
+═══════════════════════════════════════════════════════════════ */
+.pfut-form-card {
+    position: relative;
+    background: rgba(8,12,24,0.82);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-radius: 14px; padding: 2.25rem 2rem;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 4px 40px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.03);
+    animation: futSlideIn 0.7s ease 0.3s both;
+    overflow: hidden;
+}
+.pfut-form-card::before {
+    content: '';
+    position: absolute; top: 0; left: -50%; right: -50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139,92,246,0.28), transparent);
+}
+.pfut-form-card-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 100% 0%, rgba(0,212,255,0.04) 0%, transparent 55%);
+}
+
+.pfut-form-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem; font-weight: 700; color: #fff;
+    letter-spacing: 2px; margin-bottom: 0.3rem;
+    position: relative; z-index: 1;
+}
+.pfut-form-subtitle {
+    font-family: var(--font-display);
+    font-size: 0.6rem; letter-spacing: 3px;
+    color: rgba(0,212,255,0.4); margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    position: relative; z-index: 1;
+}
+.pfut-form-subtitle-line {
+    flex: 1; display: block; height: 1px;
+    background: linear-gradient(90deg, rgba(0,212,255,0.15), transparent);
+}
+
+/* ── FORM SECTIONS ── */
+.pfut-form-section {
+    margin-bottom: 2rem;
+    position: relative; z-index: 1;
+}
+.pfut-section-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1.1rem;
+}
+.pfut-section-num {
+    font-family: var(--font-display);
+    font-size: 0.58rem; letter-spacing: 2px;
+    color: rgba(0,212,255,0.3);
+    flex-shrink: 0;
+}
+.pfut-section-title {
+    font-family: var(--font-display);
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 3px;
+    color: rgba(255,255,255,0.55);
+}
+.pfut-section-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(0,212,255,0.12), transparent);
+}
+
+/* ── INPUT GROUP ── */
+.pfut-input-group { margin-bottom: 1.1rem; }
+.pfut-input-label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.6rem; letter-spacing: 2px;
+    color: rgba(255,255,255,0.3); margin-bottom: 0.65rem;
+}
+
+/* ── FILE UPLOAD ── */
+.pfut-file-zone {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.pfut-file-btn {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: rgba(0,212,255,0.04);
+    border: 1px solid rgba(0,212,255,0.12);
+    border-radius: 5px; padding: 0.75rem 1.2rem;
+    font-family: var(--font-display);
+    font-size: 0.8rem; letter-spacing: 1px;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer; transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.pfut-file-btn:hover {
+    border-color: rgba(0,212,255,0.3);
+    color: var(--fut-neon-blue);
+    background: rgba(0,212,255,0.07);
+    box-shadow: 0 0 16px rgba(0,212,255,0.1);
+}
+.pfut-file-icon { font-size: 1rem; }
+.pfut-file-text { font-size: 0.78rem; }
+.pfut-file-preview {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.18);
+    font-family: var(--font-display); letter-spacing: 1px;
+    transition: color 0.2s;
+}
+
+/* ── TEXTAREA ── */
+.pfut-textarea {
+    width: 100%;
+    background: rgba(0,212,255,0.025);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    color: rgba(255,255,255,0.8);
+    font-family: var(--font-body, 'Exo 2', sans-serif);
+    font-size: 0.92rem; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    resize: vertical;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+.pfut-textarea:focus {
+    border-color: rgba(139,92,246,0.5);
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.08);
+    background: rgba(139,92,246,0.03);
+}
+.pfut-char-hint {
+    display: block; font-size: 0.62rem; margin-top: 0.4rem;
+    color: rgba(255,255,255,0.18);
+    font-family: var(--font-display); letter-spacing: 1px;
+    font-style: italic;
+}
+
+/* ── HIDDEN SELECT (backend compat) ── */
+.pfut-select-hidden {
+    display: none !important;
+}
+
+/* ── INTEREST GRID ── */
+.pfut-interest-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+@media (max-width: 500px) {
+    .pfut-interest-grid { grid-template-columns: 1fr; }
+}
+.pfut-interest-option {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.5rem; padding: 1.1rem 0.75rem;
+    background: rgba(0,212,255,0.03);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-radius: 8px;
+    cursor: pointer; transition: all 0.22s;
+    text-align: center;
+    position: relative; overflow: hidden;
+}
+.pfut-interest-option::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(0,212,255,0.04), transparent);
+    opacity: 0; transition: opacity 0.25s;
+}
+.pfut-interest-option:hover {
+    border-color: rgba(0,212,255,0.25);
+    background: rgba(0,212,255,0.06);
+    transform: translateY(-3px);
+}
+.pfut-interest-option:hover::before { opacity: 1; }
+.pfut-io-active {
+    background: rgba(139,92,246,0.1) !important;
+    border-color: rgba(139,92,246,0.35) !important;
+    box-shadow: 0 0 20px rgba(139,92,246,0.12), inset 0 0 0 1px rgba(139,92,246,0.1);
+}
+.pfut-io-active::after {
+    content: '✓';
+    position: absolute; top: 6px; right: 8px;
+    font-size: 0.6rem; color: rgba(139,92,246,0.8);
+    font-family: var(--font-display);
+}
+.pfut-io-icon { font-size: 1.75rem; transition: transform 0.2s; }
+.pfut-interest-option:hover .pfut-io-icon { transform: scale(1.15); }
+.pfut-io-active .pfut-io-icon { transform: scale(1.1); }
+.pfut-io-label {
+    font-family: var(--font-display);
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+    transition: color 0.2s;
+}
+.pfut-interest-option:hover .pfut-io-label { color: rgba(255,255,255,0.8); }
+.pfut-io-active .pfut-io-label { color: #a882ff; }
+
+/* ── SAVE BUTTON ── */
+.pfut-btn-save {
+    display: block; width: 100%;
+    margin-top: 0.75rem; padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    border: none; border-radius: 5px; cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 0.9rem; font-weight: 700; letter-spacing: 3px; color: #fff;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(0,212,255,0.25);
+    position: relative; overflow: hidden;
+    z-index: 1;
+}
+.pfut-btn-shine {
+    position: absolute; top: 0; left: -100%; width: 55%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+    transition: left 0.55s ease;
+    pointer-events: none;
+}
+.pfut-btn-content {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+}
+.pfut-btn-icon-wrap {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+}
+.pfut-btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 35px rgba(0,212,255,0.45);
+    filter: brightness(1.08);
+}
+.pfut-btn-save:hover .pfut-btn-shine { left: 150%; }
+.pfut-btn-save:hover .pfut-btn-icon-wrap { transform: scale(1.15) rotate(10deg); }
+.pfut-btn-save:active { transform: translateY(0); filter: brightness(0.96); }
+.pfut-btn-save.pfut-saving {
+    pointer-events: none; opacity: 0.7;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+    .pfut-form-card { padding: 1.5rem 1.25rem; }
+    .pfut-player-card { padding: 1.75rem 1.25rem 1.5rem; }
+    .pfut-stat-val { font-size: 1.15rem; }
+    .pfut-quick-actions { flex-direction: row; }
+    .pfut-stats-row { gap: 1rem; padding: 0.85rem 1rem; }
+}
+@media (max-width: 440px) {
+    .pfut-interest-grid { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    .pfut-interest-option { padding: 0.85rem 0.4rem; }
+    .pfut-io-icon { font-size: 1.4rem; }
+    .pfut-io-label { font-size: 0.58rem; }
+}

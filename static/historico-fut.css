@@ -1,0 +1,346 @@
+/* ═══════════════════════════════════════════════════════
+   historico-fut.css — NeoMind Histórico Premium Interface
+   Identidade visual: dashboard-fut.css
+   ═══════════════════════════════════════════════════════ */
+
+/* ── WRAPPER ── */
+.hfut-wrapper {
+    position: relative; z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+}
+@media (max-width: 700px) {
+    .hfut-wrapper { padding: 1.5rem 1rem 4rem; }
+}
+
+/* ── STATUS BAR ── */
+.hfut-status-bar {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.5rem 2rem;
+    background: rgba(0,212,255,0.03);
+    border-bottom: 1px solid rgba(0,212,255,0.08);
+    font-family: var(--font-display);
+    font-size: 0.62rem; letter-spacing: 3px;
+    color: rgba(0,212,255,0.45);
+    overflow: hidden;
+}
+.hfut-status-bar::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--fut-neon-blue), var(--fut-neon-purple));
+}
+.hfut-status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--fut-neon-cyan);
+    box-shadow: 0 0 8px var(--fut-neon-cyan);
+    animation: statusPulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+/* ── PAGE HEADER ── */
+.hfut-page-header {
+    margin-bottom: 2rem;
+    animation: futSlideIn 0.6s ease 0.1s both;
+}
+.hfut-breadcrumb {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.75rem; color: rgba(255,255,255,0.3);
+    font-family: var(--font-display); letter-spacing: 1px;
+    text-decoration: none; transition: color 0.2s;
+}
+.hfut-breadcrumb:hover { color: var(--fut-neon-blue); }
+
+.hfut-eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.65rem; letter-spacing: 4px;
+    color: rgba(0,212,255,0.5);
+    display: flex; align-items: center; gap: 0.5rem;
+    margin: 0.75rem 0 0.5rem;
+}
+.hfut-eyebrow-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--fut-neon-blue);
+    box-shadow: 0 0 6px var(--fut-neon-blue);
+}
+.hfut-eyebrow-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(0,212,255,0.2), transparent);
+}
+.hfut-page-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700; line-height: 1.05;
+    letter-spacing: -0.5px; margin-bottom: 0.35rem;
+    background: linear-gradient(135deg, #fff 40%, var(--fut-neon-blue) 70%, var(--fut-neon-purple) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(0,212,255,0.25));
+}
+.hfut-page-title em { font-style: normal; }
+.hfut-page-sub {
+    font-size: 0.82rem; color: rgba(255,255,255,0.35);
+    font-family: var(--font-display); letter-spacing: 1px;
+}
+
+/* ── STATS GRID ── */
+.hfut-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+    animation: futSlideIn 0.6s ease 0.2s both;
+}
+@media (max-width: 700px) {
+    .hfut-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 380px) {
+    .hfut-stats-grid { grid-template-columns: 1fr; }
+}
+
+.hfut-stat-card {
+    position: relative;
+    background: rgba(8,12,24,0.8);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-radius: 10px;
+    padding: 1.25rem 1rem;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: default;
+}
+.hfut-stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: -50%; right: -50%;
+    height: 1px;
+    opacity: 0; transition: opacity 0.3s;
+}
+.hfut-stat-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0,212,255,0.2);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+.hfut-stat-card:hover::before { opacity: 1; }
+
+/* Color variants */
+.hfut-stat-total { border-top: 2px solid rgba(0,212,255,0.3); }
+.hfut-stat-total::before { background: linear-gradient(90deg, transparent, rgba(0,212,255,0.4), transparent); }
+.hfut-stat-win   { border-top: 2px solid rgba(6,255,212,0.3); }
+.hfut-stat-win::before   { background: linear-gradient(90deg, transparent, rgba(6,255,212,0.4), transparent); }
+.hfut-stat-fail  { border-top: 2px solid rgba(139,92,246,0.3); }
+.hfut-stat-fail::before  { background: linear-gradient(90deg, transparent, rgba(139,92,246,0.4), transparent); }
+.hfut-stat-rate  { border-top: 2px solid rgba(232,200,74,0.3); }
+.hfut-stat-rate::before  { background: linear-gradient(90deg, transparent, rgba(232,200,74,0.4), transparent); }
+
+.hfut-stat-icon { font-size: 1.4rem; margin-bottom: 0.5rem; display: block; }
+.hfut-stat-num {
+    font-family: var(--font-display);
+    font-size: 2.2rem; font-weight: 700;
+    line-height: 1; display: block; margin-bottom: 0.3rem;
+}
+.hfut-stat-total .hfut-stat-num  { color: var(--fut-neon-blue);   text-shadow: 0 0 15px rgba(0,212,255,0.3); }
+.hfut-stat-win   .hfut-stat-num  { color: var(--fut-neon-cyan);   text-shadow: 0 0 15px rgba(6,255,212,0.3); }
+.hfut-stat-fail  .hfut-stat-num  { color: var(--fut-neon-purple); text-shadow: 0 0 15px rgba(139,92,246,0.3); }
+.hfut-stat-rate  .hfut-stat-num  { color: var(--fut-gold);        text-shadow: 0 0 15px rgba(232,200,74,0.3); }
+.hfut-stat-label {
+    font-family: var(--font-display);
+    font-size: 0.6rem; letter-spacing: 2px;
+    color: rgba(255,255,255,0.3);
+}
+
+/* ── PROGRESS BAR (taxa de acerto) ── */
+.hfut-progress-wrap {
+    margin-bottom: 2rem;
+    background: rgba(8,12,24,0.7);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-radius: 8px; padding: 1rem 1.25rem;
+    backdrop-filter: blur(8px);
+    animation: futSlideIn 0.6s ease 0.3s both;
+}
+.hfut-progress-label {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-display);
+    font-size: 0.6rem; letter-spacing: 2px;
+    color: rgba(255,255,255,0.3); margin-bottom: 0.5rem;
+}
+.hfut-progress-label span:last-child { color: var(--fut-gold); }
+.hfut-progress-track {
+    position: relative; height: 5px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 100px; overflow: hidden;
+}
+.hfut-progress-fill {
+    height: 100%; width: 0;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 10px rgba(0,212,255,0.5);
+}
+.hfut-progress-shine {
+    position: absolute; top: 0; left: 0;
+    height: 100%; width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    animation: progressShine 2.2s ease-in-out infinite;
+}
+@keyframes progressShine {
+    from { transform: translateX(-150%); }
+    to   { transform: translateX(400%); }
+}
+
+/* ── SECTION HEADER ── */
+.hfut-section-header {
+    display: flex; align-items: center; gap: 1.5rem;
+    margin-bottom: 1.25rem;
+    animation: futSlideIn 0.6s ease 0.35s both;
+}
+.hfut-section-label {
+    font-family: var(--font-display);
+    font-size: 0.62rem; letter-spacing: 4px;
+    color: rgba(0,212,255,0.5); white-space: nowrap;
+}
+.hfut-section-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(0,212,255,0.2), transparent);
+}
+.hfut-section-count {
+    font-family: var(--font-display);
+    font-size: 0.6rem; letter-spacing: 2px;
+    color: rgba(255,255,255,0.2);
+    white-space: nowrap;
+}
+
+/* ── HISTORY FEED ── */
+.hfut-feed {
+    display: flex; flex-direction: column; gap: 0.65rem;
+    animation: futSlideIn 0.6s ease 0.4s both;
+}
+
+.hfut-card {
+    position: relative;
+    display: flex; align-items: center; gap: 1rem;
+    background: rgba(8,12,24,0.72);
+    border: 1px solid rgba(0,212,255,0.09);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    overflow: hidden;
+}
+.hfut-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    transition: opacity 0.25s;
+    opacity: 0;
+}
+.hfut-card-win::before  { background: linear-gradient(180deg, var(--fut-neon-cyan), rgba(6,255,212,0.4)); }
+.hfut-card-lose::before { background: linear-gradient(180deg, var(--fut-neon-purple), rgba(139,92,246,0.4)); }
+.hfut-card:hover { transform: translateX(5px); border-color: rgba(0,212,255,0.18); }
+.hfut-card:hover::before { opacity: 1; }
+.hfut-card-win:hover  { border-color: rgba(6,255,212,0.2); background: rgba(6,255,212,0.03); }
+.hfut-card-lose:hover { border-color: rgba(139,92,246,0.2); background: rgba(139,92,246,0.03); }
+
+/* Shine on hover */
+.hfut-card-shine {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.03), transparent);
+    opacity: 0; transition: opacity 0.25s;
+    transform: skewX(-15deg);
+    pointer-events: none;
+}
+.hfut-card:hover .hfut-card-shine { opacity: 1; }
+
+.hfut-card-icon {
+    font-size: 1.4rem; flex-shrink: 0;
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s;
+}
+.hfut-card-win  .hfut-card-icon { background: rgba(6,255,212,0.06);   border: 1px solid rgba(6,255,212,0.15); }
+.hfut-card-lose .hfut-card-icon { background: rgba(139,92,246,0.06);  border: 1px solid rgba(139,92,246,0.15); }
+.hfut-card:hover .hfut-card-icon { transform: scale(1.08); }
+
+.hfut-card-body { flex: 1; min-width: 0; }
+.hfut-card-tag {
+    font-family: var(--font-display);
+    font-size: 0.55rem; letter-spacing: 2px;
+    color: rgba(0,212,255,0.4);
+    display: block; margin-bottom: 0.25rem;
+}
+.hfut-card-question {
+    font-size: 0.88rem; color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin: 0;
+}
+
+.hfut-card-result {
+    font-family: var(--font-display);
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+    flex-shrink: 0; padding: 4px 12px;
+    border-radius: 3px;
+}
+.hfut-card-win  .hfut-card-result {
+    color: var(--fut-neon-cyan);
+    background: rgba(6,255,212,0.07);
+    border: 1px solid rgba(6,255,212,0.2);
+}
+.hfut-card-lose .hfut-card-result {
+    color: var(--fut-neon-purple);
+    background: rgba(139,92,246,0.07);
+    border: 1px solid rgba(139,92,246,0.2);
+}
+
+/* ── EMPTY STATE ── */
+.hfut-empty {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.75rem; padding: 5rem 2rem;
+    text-align: center;
+    background: rgba(8,12,24,0.6);
+    border: 1px solid rgba(0,212,255,0.08);
+    border-radius: 12px; backdrop-filter: blur(10px);
+    animation: futFadeIn 0.6s ease 0.2s both;
+}
+.hfut-empty-icon { font-size: 3.5rem; opacity: 0.6; }
+.hfut-empty-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem; font-weight: 700; color: #fff;
+    letter-spacing: 1px;
+}
+.hfut-empty-text {
+    font-size: 0.85rem; color: rgba(255,255,255,0.35);
+    max-width: 300px; line-height: 1.6;
+}
+.hfut-empty-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.8rem 1.75rem;
+    background: linear-gradient(135deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    color: #fff; font-family: var(--font-display);
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 2px;
+    text-decoration: none; border-radius: 4px;
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(0,212,255,0.25);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.hfut-empty-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.4); filter: brightness(1.1); }
+
+/* ── STAGGER ENTRY ANIMATIONS ── */
+.hfut-card:nth-child(1)  { animation: futSlideIn 0.4s ease 0.40s both; }
+.hfut-card:nth-child(2)  { animation: futSlideIn 0.4s ease 0.45s both; }
+.hfut-card:nth-child(3)  { animation: futSlideIn 0.4s ease 0.50s both; }
+.hfut-card:nth-child(4)  { animation: futSlideIn 0.4s ease 0.55s both; }
+.hfut-card:nth-child(5)  { animation: futSlideIn 0.4s ease 0.60s both; }
+.hfut-card:nth-child(n+6){ animation: futSlideIn 0.4s ease 0.65s both; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+    .hfut-card-question { font-size: 0.82rem; }
+    .hfut-stat-num      { font-size: 1.75rem; }
+    .hfut-card-result   { display: none; }
+    .hfut-card-icon     { width: 34px; height: 34px; font-size: 1.1rem; }
+}

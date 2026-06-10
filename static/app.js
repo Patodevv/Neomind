@@ -1,6 +1,3 @@
-// NeoMind — app.js v2.0
-// Micro-interactions & UI enhancements
-
 document.addEventListener('DOMContentLoaded', function () {
 
     // ── STAGGERED CARD ANIMATIONS ──
@@ -17,8 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
             card.style.transform = 'translateY(0)';
         }, 80 + i * 50);
     });
-
-    // ── QUIZ ALTERNATIVE SELECTION ──
     document.querySelectorAll('.nm-alt-label').forEach(label => {
         label.addEventListener('click', function () {
             document.querySelectorAll('.nm-alt-label').forEach(l => {
@@ -36,8 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-
-    // ── SUBMIT BUTTON LOADING STATE ──
     const quizForm = document.getElementById('quiz-form');
     if (quizForm) {
         quizForm.addEventListener('submit', function () {
@@ -49,8 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-
-    // ── SCROLL-TRIGGERED ENTRANCE ──
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -65,8 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
             observer.observe(el);
         });
     }
-
-    // ── XP POP ANIMATION ──
     const xpEl = document.querySelector('.nm-xp-pop');
     if (xpEl) {
         xpEl.animate([
@@ -75,8 +64,6 @@ document.addEventListener('DOMContentLoaded', function () {
             { transform: 'scale(1) translateY(0)', opacity: 1 }
         ], { duration: 500, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', fill: 'both', delay: 200 });
     }
-
-    // ── PLAYER STATUS BAR TICKER ──
     const ticker = document.querySelector('.nm-status-text');
     if (ticker) {
         const msgs = [

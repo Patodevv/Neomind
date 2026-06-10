@@ -1,10 +1,6 @@
-// NeoMind — FUT Dashboard JS
-// Particle system, transitions, menu interactions
 
 (function () {
     'use strict';
-
-    // ── PARTICLE SYSTEM ──
     const canvas = document.getElementById('fut-particles');
     if (canvas) {
         const ctx = canvas.getContext('2d');
@@ -59,8 +55,6 @@
         }
         drawParticles();
     }
-
-    // ── PLAYER CARD 3D TILT ──
     const playerCard = document.querySelector('.fut-player-card');
     if (playerCard) {
         playerCard.addEventListener('mousemove', function (e) {
@@ -78,7 +72,6 @@
         });
     }
 
-    // ── FUT MENU CARD INTERACTIONS ──
     const menuCards = document.querySelectorAll('.fut-menu-card');
     menuCards.forEach(card => {
         card.addEventListener('mouseenter', function () {
@@ -97,7 +90,6 @@
         });
     });
 
-    // ── PAGE TRANSITION ──
     const overlay = document.getElementById('fut-transition');
     function triggerTransition(href) {
         if (!overlay || !href) return;
@@ -117,7 +109,6 @@
         });
     });
 
-    // Fade in on page load
     if (overlay) {
         overlay.style.opacity = '1';
         overlay.style.transition = 'none';
@@ -130,14 +121,12 @@
         });
     }
 
-    // ── PROGRESS BAR ANIMATE ON LOAD ──
     setTimeout(() => {
         const fill = document.querySelector('.fut-progress-fill');
         const glow = document.querySelector('.fut-progress-glow');
         if (fill) fill.style.width = '35%';
     }, 800);
 
-    // ── TIER CARDS HOVER GLOW ──
     document.querySelectorAll('.fut-tier-card').forEach(card => {
         card.addEventListener('mousemove', function (e) {
             const rect = this.getBoundingClientRect();
@@ -147,8 +136,6 @@
             this.style.setProperty('--mouse-y', y + '%');
         });
     });
-
-    // ── STATUS TICKER ──
     const ticker = document.querySelector('.fut-nav-badge');
     if (ticker) {
         const msgs = [
@@ -170,8 +157,6 @@
         }, 3000);
         ticker.style.transition = 'opacity 0.25s, transform 0.25s';
     }
-
-    // ── STEP CARDS STAGGER ──
     const stepCards = document.querySelectorAll('.fut-step-card');
     if ('IntersectionObserver' in window) {
         const obs = new IntersectionObserver((entries) => {

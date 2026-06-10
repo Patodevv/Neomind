@@ -1,0 +1,507 @@
+/* ═══════════════════════════════════════════════
+   NEOMIND — LIVRO (LEITURA) PAGE
+   FUT Identity v1.0 — mirrors dashboard-fut.css
+   ═══════════════════════════════════════════════ */
+
+/* ── PAGE WRAPPER ── */
+.liv-page {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2.5rem 2.5rem 4rem;
+    animation: futFadeIn 0.6s ease both;
+}
+@media (max-width: 600px) {
+    .liv-page { padding: 1rem 1rem 3rem; }
+}
+
+/* ── BREADCRUMB ── */
+.liv-breadcrumb-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    animation: futFadeIn 0.5s ease both;
+}
+.liv-breadcrumb {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(0,212,255,0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.liv-breadcrumb:hover { color: var(--fut-neon-blue); }
+.liv-breadcrumb-sep {
+    color: rgba(0,212,255,0.2);
+    font-size: 0.75rem;
+}
+.liv-breadcrumb-current {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+}
+
+/* ── BOOK HEADER ── */
+.liv-header {
+    margin-bottom: 2.5rem;
+    animation: futSlideIn 0.6s ease 0.05s both;
+}
+.liv-eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.63rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(0,212,255,0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+.liv-eyebrow-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--fut-neon-blue);
+    box-shadow: 0 0 8px var(--fut-neon-blue);
+}
+.liv-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.05;
+    background: linear-gradient(135deg, #fff 30%, var(--fut-neon-blue) 65%, var(--fut-neon-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 16px rgba(0,212,255,0.2));
+    margin-bottom: 0.75rem;
+}
+.liv-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.liv-tag {
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    letter-spacing: 2px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+.liv-tag-novato {
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.25);
+    color: var(--fut-neon-blue);
+}
+.liv-tag-intermediario {
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.3);
+    color: #a882ff;
+}
+.liv-tag-pro {
+    background: rgba(232,200,74,0.08);
+    border: 1px solid rgba(232,200,74,0.3);
+    color: var(--fut-gold);
+    text-shadow: 0 0 8px var(--fut-gold-glow);
+}
+.liv-tag-materia {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.45);
+}
+.liv-tag-student {
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.25);
+}
+.liv-tag-student strong { color: rgba(255,255,255,0.5); }
+
+/* ── LAYOUT: ARTICLE + SIDEBAR ── */
+.liv-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 2.5rem;
+}
+@media (max-width: 960px) {
+    .liv-layout {
+        grid-template-columns: 1fr;
+    }
+    .liv-sidebar { order: -1; }
+}
+
+/* ── ARTICLE ── */
+.liv-article {
+    position: relative;
+    background: rgba(8,12,24,0.75);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-left: 3px solid rgba(0,212,255,0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    animation: futSlideIn 0.6s ease 0.1s both;
+}
+.liv-article::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    border-radius: 8px 0 0 8px;
+}
+
+/* Article inner top bar */
+.liv-article-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 1px solid rgba(0,212,255,0.07);
+    background: rgba(0,212,255,0.03);
+}
+.liv-article-label {
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    letter-spacing: 3px;
+    color: rgba(0,212,255,0.4);
+    text-transform: uppercase;
+}
+.liv-article-dots {
+    display: flex;
+    gap: 5px;
+}
+.liv-article-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: rgba(0,212,255,0.15);
+}
+.liv-article-dot:first-child { background: rgba(252,92,125,0.4); }
+.liv-article-dot:nth-child(2){ background: rgba(232,200,74,0.35); }
+.liv-article-dot:last-child  { background: rgba(0,212,255,0.35); }
+
+/* Article text body */
+.liv-text {
+    padding: 2rem 2.25rem;
+    color: rgba(255,255,255,0.82);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.97rem;
+    line-height: 1.85;
+    position: relative;
+    z-index: 1;
+}
+.liv-text h1, .liv-text h2, .liv-text h3 {
+    font-family: var(--font-display);
+    color: #fff;
+    letter-spacing: 0.5px;
+    margin-top: 1.75rem;
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+}
+.liv-text h1 {
+    font-size: 1.6rem;
+    background: linear-gradient(90deg, #fff, var(--fut-neon-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.liv-text h2 {
+    font-size: 1.25rem;
+    color: rgba(255,255,255,0.9);
+    border-left: 2px solid rgba(0,212,255,0.3);
+    padding-left: 0.75rem;
+}
+.liv-text h3 {
+    font-size: 1.05rem;
+    color: rgba(0,212,255,0.8);
+}
+.liv-text strong {
+    color: #fff;
+    font-weight: 700;
+}
+.liv-text em {
+    color: rgba(0,212,255,0.8);
+    font-style: italic;
+}
+.liv-text p { margin-bottom: 1rem; }
+.liv-text ul, .liv-text ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+.liv-text li { margin-bottom: 0.4rem; }
+.liv-text code {
+    font-family: 'Rajdhani', monospace;
+    background: rgba(0,212,255,0.07);
+    border: 1px solid rgba(0,212,255,0.12);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: var(--fut-neon-blue);
+}
+.liv-text blockquote {
+    border-left: 3px solid rgba(139,92,246,0.4);
+    padding: 0.6rem 1rem;
+    margin: 1rem 0;
+    background: rgba(139,92,246,0.05);
+    border-radius: 0 6px 6px 0;
+    color: rgba(255,255,255,0.6);
+    font-style: italic;
+}
+/* KaTeX display math spacing */
+.liv-text .katex-display {
+    padding: 1rem 0;
+    overflow-x: auto;
+}
+
+/* ── SIDEBAR ── */
+.liv-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    animation: futSlideIn 0.6s ease 0.2s both;
+}
+
+/* Sidebar card base */
+.liv-sidebar-card {
+    background: rgba(8,12,24,0.8);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-radius: 8px;
+    padding: 1.25rem;
+    backdrop-filter: blur(10px);
+    transition: border-color 0.25s;
+}
+.liv-sidebar-card:hover { border-color: rgba(0,212,255,0.2); }
+
+.liv-sc-label {
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    letter-spacing: 3px;
+    color: rgba(0,212,255,0.4);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0,212,255,0.07);
+    padding-bottom: 0.5rem;
+}
+
+/* Status card */
+.liv-sc-stat-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.liv-sc-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.liv-sc-stat-icon { font-size: 1.1rem; }
+.liv-sc-stat-info { display: flex; flex-direction: column; gap: 1px; }
+.liv-sc-stat-key {
+    font-family: var(--font-display);
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+}
+.liv-sc-stat-val {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #fff;
+}
+.liv-sc-stat-val.xp    { color: var(--fut-neon-blue); }
+.liv-sc-stat-val.lvl-novato       { color: #c8fb4c; }
+.liv-sc-stat-val.lvl-intermediario{ color: #a882ff; }
+.liv-sc-stat-val.lvl-pro          { color: var(--fut-gold); text-shadow: 0 0 10px var(--fut-gold-glow); }
+
+/* Tip card */
+.liv-sidebar-tip {
+    background: rgba(139,92,246,0.05);
+    border-color: rgba(139,92,246,0.12);
+}
+.liv-sidebar-tip:hover { border-color: rgba(139,92,246,0.25); }
+.liv-tip-text {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.55;
+}
+
+/* Reading progress card */
+.liv-progress-card {
+    background: rgba(0,212,255,0.04);
+    border-color: rgba(0,212,255,0.1);
+}
+.liv-progress-nums {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.liv-progress-pct {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--fut-neon-blue);
+    text-shadow: 0 0 12px rgba(0,212,255,0.4);
+    line-height: 1;
+}
+.liv-progress-sub {
+    font-family: var(--font-display);
+    font-size: 0.52rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+}
+.liv-progress-track {
+    position: relative;
+    height: 5px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 100px;
+    overflow: hidden;
+}
+.liv-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    border-radius: 100px;
+    transition: width 0.3s ease;
+    animation: progressPulse 3s ease-in-out infinite;
+}
+.liv-progress-track-shine {
+    position: absolute; top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: progressShine 2s ease-in-out infinite;
+}
+
+/* ── CTA BOX ── */
+.liv-cta-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    background: rgba(0,212,255,0.04);
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 8px;
+    padding: 1.75rem 2rem;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    animation: futSlideIn 0.6s ease 0.35s both;
+}
+.liv-cta-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--fut-neon-blue), var(--fut-neon-purple), transparent);
+    opacity: 0.4;
+}
+.liv-cta-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(0,212,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+}
+.liv-cta-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 200px;
+}
+.liv-cta-icon { font-size: 1.8rem; flex-shrink: 0; }
+.liv-cta-text-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.2rem;
+}
+.liv-cta-text-sub {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.4;
+}
+
+/* CTA submit button — same as .fut-btn-primary */
+.liv-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 2rem;
+    background: linear-gradient(135deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    white-space: nowrap;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+.liv-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,212,255,0.5);
+    filter: brightness(1.1);
+}
+.liv-cta-btn:active { transform: translateY(0); }
+
+/* ── BACK LINK ── */
+.liv-back-row {
+    margin-top: 1.5rem;
+    text-align: center;
+    animation: futFadeIn 0.5s ease 0.5s both;
+}
+.liv-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.liv-back-link:hover { color: rgba(255,255,255,0.5); }
+
+/* ── PAGE TRANSITION OVERLAY ── */
+#liv-transition {
+    position: fixed; inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.12), rgba(139,92,246,0.12));
+    backdrop-filter: blur(0px);
+    transition: opacity 0.3s, backdrop-filter 0.3s;
+}
+#liv-transition.active {
+    opacity: 1;
+    pointer-events: all;
+    backdrop-filter: blur(8px);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+    .liv-cta-box { flex-direction: column; text-align: center; }
+    .liv-cta-content { justify-content: center; }
+    .liv-cta-btn { width: 100%; justify-content: center; }
+    .liv-text { padding: 1.25rem; font-size: 0.9rem; }
+}

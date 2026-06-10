@@ -1,0 +1,549 @@
+/* ═══════════════════════════════════════════════
+   NEOMIND — MATÉRIAS PAGE
+   FUT Identity v1.0 — mirrors dashboard-fut.css
+   ═══════════════════════════════════════════════ */
+
+/* ── PAGE WRAPPER ── */
+.mat-page {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2.5rem 2.5rem 4rem;
+    animation: futSlideIn 0.6s ease both;
+}
+@media (max-width: 600px) {
+    .mat-page { padding: 1rem 1rem 3rem; }
+}
+
+/* ── PAGE HEADER ── */
+.mat-header {
+    margin-bottom: 2.5rem;
+    animation: futFadeIn 0.6s ease both;
+}
+.mat-breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(0,212,255,0.5);
+    text-decoration: none;
+    margin-bottom: 1.25rem;
+    transition: color 0.2s;
+}
+.mat-breadcrumb:hover { color: var(--fut-neon-blue); }
+.mat-breadcrumb-arrow { font-size: 0.8rem; }
+
+.mat-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.mat-eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(0,212,255,0.45);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.mat-eyebrow-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--fut-neon-blue);
+    box-shadow: 0 0 8px var(--fut-neon-blue);
+}
+.mat-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+    background: linear-gradient(135deg, #fff 30%, var(--fut-neon-blue) 65%, var(--fut-neon-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(0,212,255,0.25));
+}
+.mat-subtitle {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.3);
+    font-style: italic;
+    line-height: 1.5;
+    border-left: 2px solid rgba(0,212,255,0.25);
+    padding-left: 0.75rem;
+    margin-top: 0.5rem;
+    max-width: 500px;
+}
+
+/* ── CONTROLS BAR ── */
+.mat-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    animation: futSlideIn 0.6s ease 0.1s both;
+}
+
+/* Search */
+.mat-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 380px;
+}
+.mat-search-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(0,212,255,0.4);
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: color 0.2s;
+}
+.mat-search {
+    width: 100%;
+    background: rgba(0,212,255,0.04);
+    border: 1px solid rgba(0,212,255,0.12);
+    border-radius: 4px;
+    padding: 0.65rem 1rem 0.65rem 2.4rem;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+.mat-search::placeholder {
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 2px;
+    font-size: 0.72rem;
+}
+.mat-search:focus {
+    border-color: rgba(0,212,255,0.4);
+    background: rgba(0,212,255,0.06);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.07);
+}
+.mat-search:focus + .mat-search-icon,
+.mat-search-wrap:focus-within .mat-search-icon {
+    color: var(--fut-neon-blue);
+}
+
+/* Filter pills */
+.mat-filters {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.mat-filter-label {
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+    margin-right: 0.25rem;
+}
+.mat-filter-pill {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    padding: 5px 12px;
+    border-radius: 3px;
+    background: rgba(0,212,255,0.05);
+    border: 1px solid rgba(0,212,255,0.1);
+    color: rgba(0,212,255,0.5);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+.mat-filter-pill:hover {
+    background: rgba(0,212,255,0.1);
+    border-color: rgba(0,212,255,0.25);
+    color: var(--fut-neon-blue);
+}
+.mat-filter-pill.active {
+    background: rgba(0,212,255,0.12);
+    border-color: var(--fut-neon-blue);
+    color: var(--fut-neon-blue);
+    box-shadow: 0 0 10px rgba(0,212,255,0.15);
+}
+
+/* Count badge */
+.mat-count-badge {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.25);
+    margin-left: auto;
+    white-space: nowrap;
+}
+.mat-count-badge span {
+    color: var(--fut-neon-blue);
+    font-weight: 700;
+}
+
+/* ── SECTION DIVIDER ── */
+.mat-section-head {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+    animation: futSlideIn 0.6s ease 0.15s both;
+}
+.mat-section-label {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 4px;
+    color: rgba(0,212,255,0.4);
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+.mat-section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(0,212,255,0.18), transparent);
+}
+
+/* ── SUBJECTS GRID ── */
+.mat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+@media (max-width: 640px) {
+    .mat-grid { grid-template-columns: 1fr; gap: 0.9rem; }
+}
+
+/* ── SUBJECT CARD ── */
+.mat-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: rgba(8,12,24,0.75);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-radius: 8px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Left accent bar (hidden by default, shown on hover/active) */
+.mat-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 8px 0 0 8px;
+}
+
+/* Shine sweep */
+.mat-card-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0,212,255,0.04) 50%,
+        transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    transform: skewX(-12deg);
+    pointer-events: none;
+}
+
+/* Radial glow */
+.mat-card-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 0% 50%, rgba(0,212,255,0.06) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.mat-card:hover,
+.mat-card:focus-visible {
+    border-color: rgba(0,212,255,0.22);
+    background: rgba(0,212,255,0.05);
+    transform: translateY(-4px);
+    box-shadow:
+        0 0 0 1px rgba(0,212,255,0.08),
+        0 16px 40px rgba(0,0,0,0.4),
+        0 0 30px rgba(0,212,255,0.08);
+}
+.mat-card:hover::before { opacity: 1; }
+.mat-card:hover .mat-card-shine { opacity: 1; }
+.mat-card:hover .mat-card-glow { opacity: 1; }
+.mat-card:active { transform: translateY(-1px); }
+
+/* Card top row */
+.mat-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Icon container */
+.mat-card-icon-wrap {
+    width: 48px; height: 48px;
+    background: rgba(0,212,255,0.06);
+    border: 1px solid rgba(0,212,255,0.12);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+.mat-card:hover .mat-card-icon-wrap {
+    background: rgba(0,212,255,0.1);
+    border-color: rgba(0,212,255,0.28);
+    box-shadow: 0 0 18px rgba(0,212,255,0.15);
+}
+
+/* Card number label */
+.mat-card-num {
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: rgba(0,212,255,0.25);
+}
+
+/* Card body */
+.mat-card-body {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1.25rem;
+}
+.mat-card-category {
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    letter-spacing: 3px;
+    color: rgba(0,212,255,0.35);
+    display: block;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+}
+.mat-card-name {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+    line-height: 1.05;
+    margin-bottom: 0.3rem;
+}
+.mat-card-desc {
+    font-size: 0.76rem;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.5;
+}
+
+/* Progress indicator */
+.mat-card-progress {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1rem;
+}
+.mat-card-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 0.35rem;
+}
+.mat-card-progress-pct {
+    color: var(--fut-neon-blue);
+}
+.mat-card-track {
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 100px;
+    overflow: hidden;
+    position: relative;
+}
+.mat-card-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fut-neon-blue), var(--fut-neon-purple));
+    border-radius: 100px;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mat-card-track-shine {
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: matProgressShine 2.5s ease-in-out infinite;
+}
+@keyframes matProgressShine {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(600%); }
+}
+
+/* Card footer */
+.mat-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(0,212,255,0.07);
+    padding-top: 0.85rem;
+}
+.mat-card-tags {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+.mat-card-tag {
+    font-family: var(--font-display);
+    font-size: 0.5rem;
+    letter-spacing: 2px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    background: rgba(0,212,255,0.06);
+    border: 1px solid rgba(0,212,255,0.1);
+    color: rgba(0,212,255,0.45);
+    text-transform: uppercase;
+}
+.mat-card-cta {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(0,212,255,0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.25s;
+    white-space: nowrap;
+}
+.mat-card:hover .mat-card-cta {
+    color: var(--fut-neon-blue);
+    transform: translateX(3px);
+}
+.mat-card-cta-arrow {
+    display: inline-block;
+    transition: transform 0.25s;
+}
+.mat-card:hover .mat-card-cta-arrow {
+    transform: translateX(4px);
+}
+
+/* ── EMPTY STATE ── */
+.mat-empty {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    gap: 1rem;
+}
+.mat-empty.visible { display: flex; }
+.mat-empty-icon {
+    font-size: 3rem;
+    opacity: 0.3;
+}
+.mat-empty-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+}
+.mat-empty-sub {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.2);
+}
+
+/* ── BACK LINK ── */
+.mat-back-row {
+    margin-top: 2.5rem;
+    display: flex;
+    justify-content: center;
+    animation: futSlideIn 0.6s ease 0.5s both;
+}
+.mat-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    text-decoration: none;
+    padding: 0.7rem 1.5rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.03);
+    transition: all 0.2s;
+}
+.mat-back-link:hover {
+    color: var(--fut-neon-blue);
+    border-color: rgba(0,212,255,0.25);
+    background: rgba(0,212,255,0.05);
+}
+
+/* ── PAGE TRANSITION OVERLAY (same as dashboard) ── */
+#mat-transition {
+    position: fixed; inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.12), rgba(139,92,246,0.12));
+    backdrop-filter: blur(0px);
+    transition: opacity 0.3s, backdrop-filter 0.3s;
+}
+#mat-transition.active {
+    opacity: 1;
+    pointer-events: all;
+    backdrop-filter: blur(8px);
+}
+
+/* ── STAGGERED CARD ENTRANCE ── */
+.mat-card:nth-child(1)  { animation: futSlideIn 0.5s ease 0.20s both; }
+.mat-card:nth-child(2)  { animation: futSlideIn 0.5s ease 0.25s both; }
+.mat-card:nth-child(3)  { animation: futSlideIn 0.5s ease 0.30s both; }
+.mat-card:nth-child(4)  { animation: futSlideIn 0.5s ease 0.35s both; }
+.mat-card:nth-child(5)  { animation: futSlideIn 0.5s ease 0.40s both; }
+.mat-card:nth-child(6)  { animation: futSlideIn 0.5s ease 0.45s both; }
+.mat-card:nth-child(7)  { animation: futSlideIn 0.5s ease 0.50s both; }
+.mat-card:nth-child(8)  { animation: futSlideIn 0.5s ease 0.55s both; }
+.mat-card:nth-child(9)  { animation: futSlideIn 0.5s ease 0.60s both; }
+.mat-card:nth-child(n+10) { animation: futSlideIn 0.5s ease 0.65s both; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+    .mat-controls { gap: 0.6rem; }
+    .mat-search-wrap { max-width: 100%; min-width: 0; }
+    .mat-filter-label { display: none; }
+    .mat-count-badge { display: none; }
+    .mat-title { font-size: clamp(1.8rem, 8vw, 2.8rem); }
+}

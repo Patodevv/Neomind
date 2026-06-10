@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo_topico }} — NeoMind</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+</head>
+<body class="nm-body fut-body">
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+<div class="nm-blob nm-blob-1"></div>
+<div class="nm-blob nm-blob-2"></div>
+
+<nav class="fut-nav">
+    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
+    <div class="fut-nav-center"><span class="fut-nav-badge">{{ nivel|upper }} · LEITURA</span></div>
+    <div class="fut-nav-right">
+        <div class="fut-nav-user">
+            <div class="fut-nav-user-dot"></div>
+            <span class="fut-nav-username">{{ usuario.usuario }}</span>
+        </div>
+        <a href="/logout" class="fut-nav-exit">SAIR ⏏</a>
+    </div>
+</nav>
+
+<div class="nm-status-bar">
+    <span class="nm-status-dot"></span>
+    <span class="nm-status-text">{{ materia|upper }} · {{ titulo_topico|upper }} · NÍVEL {{ nivel|upper }}</span>
+</div>
+
+<main class="nm-main nm-book-layout" style="position:relative;z-index:1;">
+    <div class="nm-book-header">
+        <div class="nm-breadcrumb-row">
+            <a href="/materias" class="nm-breadcrumb">Matérias</a>
+            <span class="nm-breadcrumb-sep">›</span>
+            <a href="/questoes/{{ materia }}" class="nm-breadcrumb">{{ materia }}</a>
+            <span class="nm-breadcrumb-sep">›</span>
+            <span class="nm-breadcrumb-current">{{ titulo_topico }}</span>
+        </div>
+        <h1 class="nm-book-title">📖 {{ titulo_topico }}</h1>
+        <div class="nm-book-meta">
+            <span class="nm-book-level-tag nm-tag-{{ nivel }}">{{ nivel|upper }}</span>
+            <span class="nm-book-materia-tag">{{ materia }}</span>
+            <span class="nm-book-student">Estudante: <strong>{{ usuario.usuario }}</strong></span>
+        </div>
+    </div>
+
+    <div class="nm-book-layout-inner">
+        <article class="nm-book-article">
+            <div class="nm-book-text" id="book-text">
+                {{ texto_livro | replace('\n', '<br>') | safe }}
+            </div>
+        </article>
+        <aside class="nm-book-sidebar">
+            <div class="nm-book-sidebar-card">
+                <span class="nm-sidebar-label">Seu Status</span>
+                <div class="nm-sidebar-xp">{{ usuario.pontos }} XP</div>
+                <div class="nm-sidebar-level">Nível: <strong class="nm-level-badge-{{ usuario.nivel }}">{{ usuario.nivel|upper }}</strong></div>
+            </div>
+            <div class="nm-book-sidebar-card nm-sidebar-tip">
+                <span class="nm-sidebar-label">💡 Dica</span>
+                <p>Leia com atenção. A IA usará este conteúdo como base para gerar suas questões!</p>
+            </div>
+            <div class="nm-book-progress-card">
+                <span class="nm-sidebar-label">Progresso da Leitura</span>
+                <div class="nm-book-progress-bar">
+                    <div class="nm-book-progress-fill" id="reading-progress"></div>
+                </div>
+                <span class="nm-book-progress-pct" id="progress-pct">0%</span>
+            </div>
+        </aside>
+    </div>
+
+    <div class="nm-book-cta-box">
+        <div class="nm-book-cta-content">
+            <span class="nm-book-cta-icon">⚡</span>
+            <div>
+                <h3>Pronto para o Desafio?</h3>
+                <p>Ao confirmar, a IA irá gerar uma questão inédita baseada neste capítulo.</p>
+            </div>
+        </div>
+        <form method="POST">
+            <button type="submit" class="nm-btn-cta">Concluí a Leitura — Ir para as Questões ⚔️</button>
+        </form>
+    </div>
+    <div style="margin-top:1.5rem; text-align:center;">
+        <a href="/questoes/{{ materia }}" class="nm-breadcrumb">← Desistir e voltar aos módulos</a>
+    </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.getElementById('book-text'), {
+        delimiters: [{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]
+    });
+});
+function updateProgress() {
+    const el = document.getElementById('book-text');
+    const rect = el.getBoundingClientRect();
+    const total = el.offsetHeight;
+    const viewed = Math.min(window.scrollY + window.innerHeight - rect.top, total);
+    const pct = Math.max(0, Math.min(100, Math.round((viewed / total) * 100)));
+    document.getElementById('reading-progress').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+}
+window.addEventListener('scroll', updateProgress);
+updateProgress();
+</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+</body>
+</html>

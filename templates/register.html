@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoMind — Criar Conta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        :root {
+            --fut-gold: #e8c84a;
+            --fut-neon-blue: #00d4ff;
+            --fut-neon-purple: #8b5cf6;
+            --fut-neon-cyan: #06ffd4;
+            --fut-arena-dark: #04060e;
+            --fut-arena-mid: #080c18;
+        }
+        body { margin: 0; background: var(--fut-arena-dark); }
+        .reg-scene {
+            min-height: 100vh; display: flex;
+            background-image: url("/static/uploads/fundo.png");
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        .reg-scene::before {
+            content: ''; position: fixed; inset: 0;
+            background: rgba(4,6,14,0.72); z-index: 0;
+        }
+        .reg-form-side {
+            position: relative; z-index: 1;
+            width: 100%; max-width: 500px;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: clamp(2rem, 5vw, 4rem);
+            background: rgba(4,6,14,0.92);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(0,212,255,0.1);
+        }
+        .reg-form-side::after {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 1px; height: 100%;
+            background: linear-gradient(180deg, transparent, var(--fut-neon-blue) 40%, var(--fut-neon-purple) 70%, transparent);
+            opacity: 0.4;
+        }
+        .reg-visual {
+            flex: 1; position: relative; z-index: 1;
+            display: none; flex-direction: column; justify-content: center;
+            padding: 4rem;
+        }
+        @media(min-width: 900px) { .reg-visual { display: flex; } }
+
+        /* Brand */
+        .reg-logo {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem; font-weight: 700;
+            color: #fff; letter-spacing: 1px;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 0.4rem;
+        }
+        .reg-logo span { color: var(--fut-neon-blue); }
+        .mobile-brand { display: block; margin-bottom: 1.5rem; }
+        @media(min-width: 900px) { .mobile-brand { display: none; } }
+
+        /* Form header */
+        .form-eyebrow {
+            display: block; font-family: 'Rajdhani', sans-serif;
+            font-size: 0.65rem; letter-spacing: 4px;
+            color: var(--fut-neon-blue); opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+        .form-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.2rem; font-weight: 700;
+            color: #fff; letter-spacing: -0.5px;
+            margin-bottom: 2rem;
+        }
+
+        /* Input group */
+        .reg-group { margin-bottom: 1.2rem; }
+        .reg-group label {
+            display: block; font-family: 'Rajdhani', sans-serif;
+            font-size: 0.62rem; letter-spacing: 3px;
+            color: rgba(255,255,255,0.4); margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        .reg-input, .reg-select {
+            width: 100%;
+            background: rgba(0,212,255,0.04);
+            border: 1px solid rgba(0,212,255,0.12);
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            color: #fff;
+            font-family: 'Exo 2', sans-serif; font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .reg-input::placeholder { color: rgba(255,255,255,0.2); }
+        .reg-input:focus, .reg-select:focus {
+            border-color: rgba(0,212,255,0.4);
+            box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+        }
+        .reg-select option { background: #0e1220; }
+
+        /* Interest grid */
+        .interest-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; }
+        .interest-option { display: none; }
+        .interest-label {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 0.4rem; padding: 0.8rem 0.4rem;
+            background: rgba(0,212,255,0.04);
+            border: 1px solid rgba(0,212,255,0.1);
+            border-radius: 8px; cursor: pointer;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.75rem; color: rgba(255,255,255,0.45);
+            transition: all 0.2s; text-align: center;
+        }
+        .interest-icon { font-size: 1.3rem; }
+        .interest-option:checked + .interest-label {
+            background: rgba(0,212,255,0.1);
+            border-color: rgba(0,212,255,0.4);
+            color: #fff;
+            box-shadow: 0 0 0 2px rgba(0,212,255,0.12);
+        }
+
+        /* CTA button */
+        .reg-btn {
+            width: 100%; padding: 0.9rem;
+            background: linear-gradient(135deg, var(--fut-neon-blue), var(--fut-neon-purple));
+            border: none; border-radius: 4px;
+            color: #fff; font-family: 'Rajdhani', sans-serif;
+            font-size: 1.05rem; font-weight: 700; letter-spacing: 2px;
+            cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+        .reg-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,212,255,0.35);
+            filter: brightness(1.1);
+        }
+        .form-footer {
+            margin-top: 1.5rem; text-align: center;
+            font-size: 0.85rem; color: rgba(255,255,255,0.3);
+        }
+        .form-footer a { color: var(--fut-neon-blue); text-decoration: none; font-weight: 600; }
+
+        /* Visual side */
+        .vis-badge {
+            display: inline-block;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.6rem; letter-spacing: 4px;
+            color: var(--fut-neon-blue); opacity: 0.7;
+            border: 1px solid rgba(0,212,255,0.2);
+            padding: 4px 14px; border-radius: 2px;
+            background: rgba(0,212,255,0.06);
+            margin-bottom: 1.5rem;
+        }
+        .vis-headline {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(2rem, 3.5vw, 3.2rem); font-weight: 700;
+            color: #fff; line-height: 1.05; margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+        .vis-headline em {
+            font-style: normal;
+            background: linear-gradient(135deg, #fff 30%, var(--fut-neon-blue) 60%, var(--fut-neon-purple) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .vis-sub {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.9rem; color: rgba(255,255,255,0.35); line-height: 1.6;
+            max-width: 380px; margin-bottom: 2.5rem;
+        }
+        .feature-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem; }
+        .feature-list li {
+            display: flex; align-items: center; gap: 0.75rem;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.88rem; color: rgba(255,255,255,0.5);
+        }
+        .feature-icon {
+            width: 30px; height: 30px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; flex-shrink: 0;
+        }
+        .fi-blue { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); }
+        .fi-purple { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2); }
+        .fi-gold { background: rgba(232,200,74,0.1); border: 1px solid rgba(232,200,74,0.2); }
+    </style>
+</head>
+<body>
+<div class="reg-scene">
+    <!-- FORM SIDE -->
+    <div class="reg-form-side">
+        <div class="reg-logo mobile-brand">⚡ Neo<span>Mind</span></div>
+        <span class="form-eyebrow">INÍCIO DA JORNADA</span>
+        <h1 class="form-title">CRIAR CONTA</h1>
+        <form method="POST">
+            <div class="reg-group">
+                <label for="usuario">Nome de Usuário</label>
+                <input class="reg-input" type="text" id="usuario" name="usuario" placeholder="Escolha seu usuário" required>
+            </div>
+            <div class="reg-group">
+                <label for="senha">Senha</label>
+                <input class="reg-input" type="password" id="senha" name="senha" placeholder="Crie uma senha forte" required>
+            </div>
+            <div class="reg-group">
+                <label>Seu Universo Favorito</label>
+                <div class="interest-grid">
+                    <div>
+                        <input class="interest-option" type="radio" name="interesse" id="int-animes" value="animes" required>
+                        <label class="interest-label" for="int-animes">
+                            <span class="interest-icon">⚔️</span>Animes
+                        </label>
+                    </div>
+                    <div>
+                        <input class="interest-option" type="radio" name="interesse" id="int-jogos" value="jogos">
+                        <label class="interest-label" for="int-jogos">
+                            <span class="interest-icon">🎮</span>Games
+                        </label>
+                    </div>
+                    <div>
+                        <input class="interest-option" type="radio" name="interesse" id="int-esportes" value="esportes">
+                        <label class="interest-label" for="int-esportes">
+                            <span class="interest-icon">⚽</span>Esportes
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="reg-btn">CRIAR MINHA CONTA →</button>
+        </form>
+        <div class="form-footer">
+            Já tem uma conta? <a href="/login">Fazer login</a>
+        </div>
+    </div>
+
+    <!-- VISUAL SIDE -->
+    <div class="reg-visual">
+        <div class="reg-logo">⚡ Neo<span>Mind</span></div>
+        <span class="vis-badge">PLATAFORMA DE ESTUDOS</span>
+        <div class="vis-headline">Sua jornada<br>começa <em>agora</em></div>
+        <p class="vis-sub">Personalize sua experiência de aprendizado com o universo que você ama.</p>
+        <ul class="feature-list">
+            <li>
+                <span class="feature-icon fi-blue">🧠</span>
+                IA gera questões personalizadas infinitas
+            </li>
+            <li>
+                <span class="feature-icon fi-purple">⚡</span>
+                Suba de nível: Novato → Intermediário → Pro
+            </li>
+            <li>
+                <span class="feature-icon fi-gold">🏆</span>
+                XP, medalhas e sistema de progressão
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

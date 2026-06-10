@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico — NeoMind</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+</head>
+<body class="nm-body fut-body">
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+<div class="nm-blob nm-blob-1"></div>
+<div class="nm-blob nm-blob-2"></div>
+
+<nav class="fut-nav">
+    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
+    <div class="fut-nav-center"><span class="fut-nav-badge">LOG DE BATALHAS</span></div>
+    <div class="fut-nav-right">
+        <div class="fut-nav-user">
+            <div class="fut-nav-user-dot"></div>
+            <span class="fut-nav-username">{{ usuario }}</span>
+        </div>
+        <a href="/logout" class="fut-nav-exit">SAIR ⏏</a>
+    </div>
+</nav>
+
+<div class="nm-status-bar">
+    <span class="nm-status-dot"></span>
+    <span class="nm-status-text">LOG DE BATALHAS · HISTÓRICO DE DESEMPENHO</span>
+</div>
+
+<main class="nm-main" style="position:relative;z-index:1;">
+    <div class="nm-page-header">
+        <a href="/dashboard" class="nm-breadcrumb">← Dashboard</a>
+        <h1 class="nm-page-title">Log de <em>Batalhas</em></h1>
+        <p class="nm-page-sub">Reveja suas questões respondidas e monitore sua evolução.</p>
+    </div>
+
+    {% if not historicos %}
+    <div class="nm-empty-state">
+        <span style="font-size:3rem;">📭</span>
+        <h3>Sem histórico ainda</h3>
+        <p>Responda questões para ver seu histórico aqui!</p>
+        <a href="/materias" class="nm-btn-secondary">Começar a estudar →</a>
+    </div>
+    {% else %}
+    {% set total = historicos|length %}
+    {% set acertos = historicos|selectattr('resultado', 'equalto', 'Acertou!')|list|length %}
+    {% set taxa = (acertos / total * 100)|round|int if total > 0 else 0 %}
+
+    <div class="nm-history-stats">
+        <div class="nm-hstat nm-hstat-total">
+            <span class="nm-hstat-num">{{ total }}</span>
+            <span class="nm-hstat-label">Total de Questões</span>
+        </div>
+        <div class="nm-hstat nm-hstat-win">
+            <span class="nm-hstat-num">{{ acertos }}</span>
+            <span class="nm-hstat-label">Acertos</span>
+        </div>
+        <div class="nm-hstat nm-hstat-fail">
+            <span class="nm-hstat-num">{{ total - acertos }}</span>
+            <span class="nm-hstat-label">Erros</span>
+        </div>
+        <div class="nm-hstat nm-hstat-rate">
+            <span class="nm-hstat-num">{{ taxa }}%</span>
+            <span class="nm-hstat-label">Taxa de Acerto</span>
+        </div>
+    </div>
+
+    <div class="nm-history-feed">
+        {% for item in historicos|reverse %}
+        <div class="nm-history-card {% if 'Acertou' in item.resultado %}nm-hcard-win{% else %}nm-hcard-lose{% endif %}">
+            <div class="nm-hcard-icon">
+                {% if 'Acertou' in item.resultado %}🏆{% else %}💀{% endif %}
+            </div>
+            <div class="nm-hcard-body">
+                <span class="nm-hcard-tag">Questão Respondida</span>
+                <p class="nm-hcard-question">"{{ item.pergunta }}"</p>
+            </div>
+            <div class="nm-hcard-result {% if 'Acertou' in item.resultado %}nm-result-win-text{% else %}nm-result-lose-text{% endif %}">
+                {{ item.resultado }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+</body>
+</html>

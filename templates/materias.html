@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seus Cursos — NeoMind</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+</head>
+<body class="nm-body fut-body">
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+<div class="nm-blob nm-blob-1"></div>
+<div class="nm-blob nm-blob-2"></div>
+
+<nav class="fut-nav">
+    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
+    <div class="fut-nav-center"><span class="fut-nav-badge">SEUS CURSOS</span></div>
+    <div class="fut-nav-right">
+        <div class="fut-nav-user">
+            <div class="fut-nav-user-dot"></div>
+            <span class="fut-nav-username">{{ usuario.usuario }}</span>
+        </div>
+        <a href="/logout" class="fut-nav-exit">SAIR ⏏</a>
+    </div>
+</nav>
+
+<main class="nm-main" style="position:relative;z-index:1;">
+    <div class="nm-page-header">
+        <a href="/dashboard" class="nm-breadcrumb">← Dashboard</a>
+        <h1 class="nm-page-title">Seus <em>Cursos</em></h1>
+    </div>
+    <div class="nm-subjects-grid">
+        {% for materia in materias %}
+        <a href="/questoes/{{ materia }}" class="nm-subject-card">
+            <div class="nm-subject-card-glow"></div>
+            <span class="nm-subject-icon">📚</span>
+            <h3 class="nm-subject-name">{{ materia }}</h3>
+            <span class="nm-subject-cta">Abrir Trilha →</span>
+        </a>
+        {% endfor %}
+    </div>
+    <div style="margin-top:2rem;text-align:center;">
+        <a href="/dashboard" class="nm-breadcrumb">← Voltar ao Dashboard</a>
+    </div>
+</main>
+<script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+</body>
+</html>

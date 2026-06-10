@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoMind — Acesse sua conta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* ── FUT TOKENS (mirroring style.css) ── */
+        :root {
+            --fut-gold: #e8c84a;
+            --fut-gold-glow: rgba(232,200,74,0.3);
+            --fut-neon-blue: #00d4ff;
+            --fut-neon-blue-dim: rgba(0,212,255,0.12);
+            --fut-neon-blue-glow: rgba(0,212,255,0.3);
+            --fut-neon-purple: #8b5cf6;
+            --fut-neon-purple-dim: rgba(139,92,246,0.15);
+            --fut-neon-cyan: #06ffd4;
+            --fut-arena-dark: #04060e;
+            --fut-arena-mid: #080c18;
+            --fut-arena-card: #0e1220;
+            --fut-arena-border: rgba(0,212,255,0.12);
+        }
+
+        /* ── CINEMATIC INTRO ── */
+        #intro-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--fut-arena-dark);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        #intro-screen.fade-out {
+            animation: introFadeOut 0.8s ease forwards;
+        }
+        @keyframes introFadeOut {
+            to { opacity: 0; pointer-events: none; }
+        }
+        #intro-canvas { position: absolute; inset: 0; }
+
+        /* Grid overlay on intro */
+        .intro-grid {
+            position: absolute; inset: 0; z-index: 1;
+            background-image:
+                linear-gradient(rgba(0,212,255,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,212,255,0.06) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
+        }
+
+        .intro-logo-wrap {
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .intro-nm {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(80px, 15vw, 160px);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -4px;
+            background: linear-gradient(135deg, #fff 0%, var(--fut-neon-blue) 45%, var(--fut-neon-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            filter: blur(20px);
+            animation: logoReveal 1.2s cubic-bezier(0.16,1,0.3,1) 1.2s forwards;
+        }
+        @keyframes logoReveal {
+            to { opacity: 1; filter: blur(0px); }
+        }
+        .intro-tagline {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: rgba(0,212,255,0.7);
+            opacity: 0;
+            animation: tagReveal 0.8s ease 2.2s forwards;
+        }
+        @keyframes tagReveal {
+            to { opacity: 1; }
+        }
+        .intro-scanline {
+            position: absolute; inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+            pointer-events: none; z-index: 3;
+        }
+        .intro-vignette {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+            pointer-events: none; z-index: 3;
+        }
+        .intro-glitch {
+            position: absolute; inset: 0; z-index: 4;
+            background: transparent;
+            animation: glitchFlash 0.1s step-end 2.8s 3;
+        }
+        @keyframes glitchFlash {
+            0%   { background: rgba(0,212,255,0.04); }
+            50%  { background: rgba(139,92,246,0.06); transform: translateX(2px); }
+            100% { background: transparent; }
+        }
+
+        /* Top accent line on intro */
+        .intro-accent-line {
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 2px; z-index: 5;
+            background: linear-gradient(90deg, transparent, var(--fut-neon-blue), var(--fut-neon-purple), transparent);
+            opacity: 0;
+            animation: tagReveal 0.6s ease 2s forwards;
+        }
+
+        /* ── LOGIN PAGE ── */
+        .login-scene {
+            min-height: 100vh; display: flex;
+            background-image: url("/static/uploads/fundo.png");
+            background-size: cover; background-position: center; background-attachment: fixed;
+            opacity: 0;
+            animation: pageReveal 0.6s ease 3.5s forwards;
+        }
+        .login-scene::before {
+            content: ''; position: fixed; inset: 0;
+            background: rgba(4,6,14,0.65); z-index: 0; pointer-events: none;
+        }
+        @keyframes pageReveal { to { opacity: 1; } }
+
+        .login-visual {
+            flex: 1.2;
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+        @media(min-width: 900px) { .login-visual { display: block; } }
+
+        .login-visual-bg {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 60% 40%, rgba(139,92,246,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 10% 80%, rgba(0,212,255,0.1) 0%, transparent 60%),
+                linear-gradient(160deg, var(--fut-arena-mid) 0%, var(--fut-arena-dark) 100%);
+        }
+        .login-visual-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(0,212,255,0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,212,255,0.07) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
+        }
+        .login-visual-content {
+            position: relative; z-index: 2;
+            height: 100%; display: flex; flex-direction: column;
+            justify-content: center; padding: 4rem;
+        }
+        .login-brand {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.8rem; font-weight: 700;
+            letter-spacing: -1px; color: #fff;
+            margin-bottom: 2.5rem;
+        }
+        .login-brand span { color: var(--fut-neon-blue); }
+
+        .login-visual-headline {
+            font-family: 'Exo 2', sans-serif;
+            font-size: clamp(2rem, 3.5vw, 3.5rem);
+            font-weight: 800; line-height: 1.1;
+            color: #fff; margin-bottom: 1.2rem;
+        }
+        .login-visual-headline em {
+            font-style: normal;
+            background: linear-gradient(90deg, var(--fut-neon-blue), var(--fut-neon-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .login-visual-sub {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem; color: rgba(255,255,255,0.4);
+            line-height: 1.6; max-width: 380px;
+        }
+        .login-stats {
+            display: flex; gap: 2rem; margin-top: 3rem;
+        }
+        .login-stat {
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .login-stat-num {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem; font-weight: 700; color: var(--fut-gold);
+            line-height: 1;
+            text-shadow: 0 0 16px var(--fut-gold-glow);
+        }
+        .login-stat-label {
+            font-size: 0.72rem; letter-spacing: 2px;
+            text-transform: uppercase; color: rgba(255,255,255,0.35);
+        }
+
+        /* Floating orbs in visual */
+        .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(60px); pointer-events: none;
+        }
+        .orb-1 { width: 300px; height: 300px; background: rgba(139,92,246,0.14); top: -80px; right: -60px; }
+        .orb-2 { width: 200px; height: 200px; background: rgba(0,212,255,0.09); bottom: 80px; left: 60px; }
+
+        /* ── FORM SIDE ── */
+        .login-form-side {
+            width: 100%; max-width: 480px;
+            display: flex; flex-direction: column;
+            justify-content: center;
+            padding: clamp(2rem, 5vw, 4rem);
+            background: rgba(8,12,24,0.97);
+            border-left: 1px solid rgba(0,212,255,0.08);
+            position: relative;
+        }
+        .login-form-side::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 2px; height: 100%;
+            background: linear-gradient(180deg, transparent, var(--fut-neon-blue) 40%, var(--fut-neon-purple) 70%, transparent);
+        }
+        .form-header { margin-bottom: 2.5rem; }
+        .form-eyebrow {
+            font-size: 0.72rem; letter-spacing: 4px;
+            text-transform: uppercase; color: var(--fut-neon-blue);
+            margin-bottom: 0.75rem; display: block;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .form-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.4rem; font-weight: 700; color: #fff;
+            line-height: 1; letter-spacing: -0.5px;
+        }
+        .nm-input-group { margin-bottom: 1.4rem; }
+        .nm-input-group label {
+            display: block; font-size: 0.72rem;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(255,255,255,0.4); margin-bottom: 0.6rem;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .nm-input {
+            width: 100%;
+            background: rgba(0,212,255,0.03);
+            border: 1px solid rgba(0,212,255,0.1);
+            border-radius: 4px;
+            padding: 0.85rem 1rem;
+            color: #fff;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        .nm-input::placeholder { color: rgba(255,255,255,0.2); }
+        .nm-input:focus {
+            border-color: rgba(0,212,255,0.45);
+            background: rgba(0,212,255,0.05);
+            box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+        }
+        .nm-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, var(--fut-neon-blue), var(--fut-neon-purple));
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem; font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0,212,255,0.25);
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+        .nm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,212,255,0.45);
+            filter: brightness(1.1);
+        }
+        .nm-btn:active { transform: translateY(0); }
+
+        .form-footer {
+            margin-top: 1.5rem; text-align: center;
+            font-size: 0.85rem; color: rgba(255,255,255,0.3);
+        }
+        .form-footer a {
+            color: var(--fut-neon-blue);
+            text-decoration: none; font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+        }
+        .form-footer a:hover { text-decoration: underline; }
+
+        /* Mobile brand */
+        .mobile-brand {
+            display: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem; font-weight: 700;
+            color: #fff; margin-bottom: 1.5rem;
+        }
+        .mobile-brand span { color: var(--fut-neon-blue); }
+        @media(max-width: 900px) {
+            .login-form-side { max-width: 100%; border-left: none; }
+            .login-form-side::before { display: none; }
+            .mobile-brand { display: block; }
+        }
+    </style>
+</head>
+<body style="margin:0; background:#04060e;">
+
+<!-- ═══ CINEMATIC INTRO ═══ -->
+<div id="intro-screen">
+    <canvas id="intro-canvas"></canvas>
+    <div class="intro-grid"></div>
+    <div class="intro-scanline"></div>
+    <div class="intro-vignette"></div>
+    <div class="intro-glitch"></div>
+    <div class="intro-accent-line"></div>
+    <div class="intro-logo-wrap">
+        <div class="intro-nm">NM</div>
+        <div class="intro-tagline">NeoMind · Plataforma de Aprendizado</div>
+    </div>
+</div>
+
+<!-- ═══ LOGIN PAGE ═══ -->
+<div class="login-scene">
+    <div class="login-visual">
+        <div class="login-visual-bg"></div>
+        <div class="login-visual-grid"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="login-visual-content">
+            <div class="login-brand">Neo<span>Mind</span></div>
+            <div class="login-visual-headline">Aprenda como<br>um <em>Campeão</em></div>
+            <p class="login-visual-sub">Plataforma gamificada com IA adaptativa. Suba de nível, conquiste XP e domine cada matéria.</p>
+            <div class="login-stats">
+                <div class="login-stat">
+                    <span class="login-stat-num">3+</span>
+                    <span class="login-stat-label">Níveis</span>
+                </div>
+                <div class="login-stat">
+                    <span class="login-stat-num">IA</span>
+                    <span class="login-stat-label">Adaptativa</span>
+                </div>
+                <div class="login-stat">
+                    <span class="login-stat-num">∞</span>
+                    <span class="login-stat-label">Questões</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-form-side">
+        <div class="mobile-brand">Neo<span>Mind</span></div>
+        <div class="form-header">
+            <span class="form-eyebrow">Acesso à Plataforma</span>
+            <h1 class="form-title">LOGIN</h1>
+        </div>
+        <form method="POST">
+            <div class="nm-input-group">
+                <label for="usuario">Usuário</label>
+                <input class="nm-input" type="text" id="usuario" name="usuario" placeholder="Seu usuário" required autocomplete="username">
+            </div>
+            <div class="nm-input-group">
+                <label for="senha">Senha</label>
+                <input class="nm-input" type="password" id="senha" name="senha" placeholder="Sua senha" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="nm-btn">ENTRAR →</button>
+        </form>
+        <div class="form-footer">
+            Não tem uma conta? <a href="/register">Criar conta grátis</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// ─── PARTICLE INTRO ─── (FUT palette: neon blue + purple)
+(function() {
+    const canvas = document.getElementById('intro-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const N = 80;
+    for (let i = 0; i < N; i++) {
+        const r = Math.random();
+        let color;
+        if (r < 0.45)       color = '0,212,255';   // --fut-neon-blue
+        else if (r < 0.8)   color = '139,92,246';  // --fut-neon-purple
+        else                color = '232,200,74';  // --fut-gold (accent)
+
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: -Math.random() * 0.4 - 0.15,
+            r: Math.random() * 1.5 + 0.4,
+            opacity: Math.random() * 0.55 + 0.1,
+            color: color
+        });
+    }
+
+    let running = true;
+    function draw() {
+        if (!running) return;
+        ctx.fillStyle = 'rgba(4,6,14,0.18)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p, i) => {
+            p.x += p.vx; p.y += p.vy;
+            if (p.y < -10) p.y = canvas.height + 5;
+            if (p.x < -10) p.x = canvas.width + 5;
+            if (p.x > canvas.width + 10) p.x = -5;
+
+            // Connect nearby particles
+            for (let j = i + 1; j < N; j++) {
+                const dx = particles[j].x - p.x;
+                const dy = particles[j].y - p.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 120) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(0,212,255,${0.12 * (1 - dist/120)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+
+            // Glow halo
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${p.color},${p.opacity * 0.15})`;
+            ctx.fill();
+
+            // Core dot
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${p.color},${p.opacity})`;
+            ctx.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+
+    setTimeout(() => {
+        running = false;
+        const intro = document.getElementById('intro-screen');
+        intro.classList.add('fade-out');
+        setTimeout(() => intro.style.display = 'none', 800);
+    }, 3200);
+})();
+</script>
+</body>
+</html>

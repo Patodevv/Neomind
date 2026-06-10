@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — NeoMind</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+</head>
+<body class="nm-body fut-body">
+
+<!-- PARTICLE CANVAS -->
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+
+<!-- ARENA GRID BG -->
+<div class="fut-arena-bg">
+    <div class="fut-arena-lines"></div>
+    <div class="fut-arena-glow-top"></div>
+    <div class="fut-arena-glow-bottom"></div>
+</div>
+
+<!-- ═══ TOP NAV BAR (FUT Style) ═══ -->
+<nav class="fut-nav">
+    <div class="fut-nav-logo">
+        <span class="fut-nav-logo-icon">⚡</span>
+        Neo<span>Mind</span>
+    </div>
+    <div class="fut-nav-center">
+        <span class="fut-nav-badge">MODO TREINAMENTO</span>
+    </div>
+    <div class="fut-nav-right">
+        <div class="fut-nav-user">
+            <div class="fut-nav-user-dot"></div>
+            <span class="fut-nav-username">{{ usuario }}</span>
+        </div>
+        <a href="/logout" class="fut-nav-exit">SAIR ⏏</a>
+    </div>
+</nav>
+
+<!-- ═══ HERO SECTION (FUT Player Card Style) ═══ -->
+<section class="fut-hero">
+    <div class="fut-hero-left">
+        <!-- BIG PLAYER CARD -->
+        <div class="fut-player-card">
+            <div class="fut-player-card-shine"></div>
+            <div class="fut-player-card-bg-pattern"></div>
+            <div class="fut-player-card-content">
+                <div class="fut-player-card-top">
+                    <div class="fut-player-rating">
+                        <span class="fut-rating-num">88</span>
+                        <span class="fut-rating-pos">XP</span>
+                        <span class="fut-rating-club">NeoMind</span>
+                    </div>
+                    <div class="fut-player-avatar-zone">
+                        <div class="fut-player-silhouette">
+                            <svg viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="60" cy="35" rx="22" ry="24" fill="rgba(255,255,255,0.15)"/>
+                                <path d="M15 155 C15 110 30 95 60 90 C90 95 105 110 105 155" fill="rgba(255,255,255,0.12)"/>
+                                <ellipse cx="60" cy="35" rx="18" ry="20" fill="rgba(255,255,255,0.2)"/>
+                                <path d="M25 155 C25 115 38 100 60 95 C82 100 95 115 95 155" fill="rgba(255,255,255,0.18)"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="fut-player-name-bar">
+                    <span class="fut-player-name">{{ usuario }}</span>
+                </div>
+                <div class="fut-player-stats-grid">
+                    <div class="fut-pstat"><span class="fut-pstat-val">ATK</span><span class="fut-pstat-key">Questões</span></div>
+                    <div class="fut-pstat"><span class="fut-pstat-val">SPD</span><span class="fut-pstat-key">Velocidade</span></div>
+                    <div class="fut-pstat"><span class="fut-pstat-val">INT</span><span class="fut-pstat-key">Intelig.</span></div>
+                    <div class="fut-pstat"><span class="fut-pstat-val">PRO</span><span class="fut-pstat-key">Rank</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fut-hero-center">
+        <div class="fut-hero-eyebrow">
+            <span class="fut-eyebrow-dot"></span>
+            BEM-VINDO DE VOLTA, JOGADOR
+        </div>
+        <h1 class="fut-hero-title">
+            <span class="fut-title-line1">PRONTO PARA</span>
+            <span class="fut-title-line2">TREINAR?</span>
+        </h1>
+        <p class="fut-hero-motto">"Cada questão respondida é um passo rumo ao topo do ranking."</p>
+
+        <div class="fut-hero-xp-panel">
+            <div class="fut-xp-row">
+                <div class="fut-xp-item">
+                    <span class="fut-xp-icon">⚡</span>
+                    <div>
+                        <span class="fut-xp-label">NÍVEL ATUAL</span>
+                        <span class="fut-xp-val">ATIVO</span>
+                    </div>
+                </div>
+                <div class="fut-xp-divider"></div>
+                <div class="fut-xp-item">
+                    <span class="fut-xp-icon">🎯</span>
+                    <div>
+                        <span class="fut-xp-label">XP ACUMULADO</span>
+                        <span class="fut-xp-val"><a href="/perfil" style="color:inherit;text-decoration:none;">Ver Perfil →</a></span>
+                    </div>
+                </div>
+                <div class="fut-xp-divider"></div>
+                <div class="fut-xp-item">
+                    <span class="fut-xp-icon">🏆</span>
+                    <div>
+                        <span class="fut-xp-label">RANKING</span>
+                        <span class="fut-xp-val">TOP</span>
+                    </div>
+                </div>
+            </div>
+            <div class="fut-progress-bar-wrap">
+                <div class="fut-progress-label">
+                    <span>PROGRESSO</span>
+                    <span>Próximo Nível</span>
+                </div>
+                <div class="fut-progress-track">
+                    <div class="fut-progress-fill"></div>
+                    <div class="fut-progress-glow"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fut-hero-cta-row">
+            <a href="/materias" class="fut-btn-primary">
+                <span class="fut-btn-icon">▶</span>
+                INICIAR TREINO
+            </a>
+            <a href="/historico" class="fut-btn-secondary">
+                VER HISTÓRICO
+            </a>
+        </div>
+    </div>
+
+    <div class="fut-hero-right">
+        <!-- QUICK STATS PANEL -->
+        <div class="fut-quick-stats">
+            <div class="fut-qs-header">ESTATÍSTICAS RÁPIDAS</div>
+            <div class="fut-qs-item fut-qs-green">
+                <div class="fut-qs-icon">⚡</div>
+                <div class="fut-qs-info">
+                    <span class="fut-qs-label">XP TOTAL</span>
+                    <span class="fut-qs-val">ACESSE PERFIL</span>
+                </div>
+                <div class="fut-qs-bar"><div class="fut-qs-bar-fill" style="width:30%"></div></div>
+            </div>
+            <div class="fut-qs-item fut-qs-purple">
+                <div class="fut-qs-icon">🎯</div>
+                <div class="fut-qs-info">
+                    <span class="fut-qs-label">QUESTÕES</span>
+                    <span class="fut-qs-val">RESPONDIDAS</span>
+                </div>
+                <div class="fut-qs-bar"><div class="fut-qs-bar-fill" style="width:55%"></div></div>
+            </div>
+            <div class="fut-qs-item fut-qs-cyan">
+                <div class="fut-qs-icon">🤖</div>
+                <div class="fut-qs-info">
+                    <span class="fut-qs-label">IA ATIVA</span>
+                    <span class="fut-qs-val">GROQ ONLINE</span>
+                </div>
+                <div class="fut-qs-bar"><div class="fut-qs-bar-fill" style="width:100%"></div></div>
+            </div>
+            <div class="fut-qs-item fut-qs-pink">
+                <div class="fut-qs-icon">🏆</div>
+                <div class="fut-qs-info">
+                    <span class="fut-qs-label">RANKING</span>
+                    <span class="fut-qs-val">100+ XP = PRO</span>
+                </div>
+                <div class="fut-qs-bar"><div class="fut-qs-bar-fill" style="width:45%"></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FUT MENU NAVIGATION (Horizontal Cards) ═══ -->
+<section class="fut-menu-section">
+    <div class="fut-menu-header">
+        <span class="fut-menu-label">SELECIONAR MODO</span>
+        <div class="fut-menu-line"></div>
+    </div>
+
+    <div class="fut-menu-track" id="fut-menu-track">
+
+        <a href="/materias" class="fut-menu-card fut-menu-active" data-index="0">
+            <div class="fut-mc-shine"></div>
+            <div class="fut-mc-glow"></div>
+            <div class="fut-mc-left">
+                <span class="fut-mc-num">01</span>
+                <div class="fut-mc-icon-wrap">
+                    <span class="fut-mc-icon">📚</span>
+                </div>
+            </div>
+            <div class="fut-mc-body">
+                <span class="fut-mc-category">TREINAMENTO</span>
+                <h3 class="fut-mc-title">Matérias</h3>
+                <p class="fut-mc-desc">Acesse disciplinas, leia livros e responda questões geradas por IA</p>
+                <div class="fut-mc-tags">
+                    <span class="fut-mc-tag">IA ATIVA</span>
+                    <span class="fut-mc-tag">+10 XP</span>
+                </div>
+            </div>
+            <div class="fut-mc-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+        </a>
+
+        <a href="/historico" class="fut-menu-card" data-index="1">
+            <div class="fut-mc-shine"></div>
+            <div class="fut-mc-glow"></div>
+            <div class="fut-mc-left">
+                <span class="fut-mc-num">02</span>
+                <div class="fut-mc-icon-wrap">
+                    <span class="fut-mc-icon">📊</span>
+                </div>
+            </div>
+            <div class="fut-mc-body">
+                <span class="fut-mc-category">ANÁLISE</span>
+                <h3 class="fut-mc-title">Histórico</h3>
+                <p class="fut-mc-desc">Revise seu desempenho, monitore acertos e identifique pontos fracos</p>
+                <div class="fut-mc-tags">
+                    <span class="fut-mc-tag">ESTATÍSTICAS</span>
+                    <span class="fut-mc-tag">EVOLUÇÃO</span>
+                </div>
+            </div>
+            <div class="fut-mc-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+        </a>
+
+        <a href="/perfil" class="fut-menu-card" data-index="2">
+            <div class="fut-mc-shine"></div>
+            <div class="fut-mc-glow"></div>
+            <div class="fut-mc-left">
+                <span class="fut-mc-num">03</span>
+                <div class="fut-mc-icon-wrap">
+                    <span class="fut-mc-icon">👤</span>
+                </div>
+            </div>
+            <div class="fut-mc-body">
+                <span class="fut-mc-category">JOGADOR</span>
+                <h3 class="fut-mc-title">Meu Perfil</h3>
+                <p class="fut-mc-desc">Personalize sua conta, veja XP completo e suba de nível</p>
+                <div class="fut-mc-tags">
+                    <span class="fut-mc-tag">RANK</span>
+                    <span class="fut-mc-tag">AVATAR</span>
+                </div>
+            </div>
+            <div class="fut-mc-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+        </a>
+
+    </div>
+</section>
+
+<!-- ═══ HOW IT WORKS (FUT Steps) ═══ -->
+<section class="fut-steps-section">
+    <div class="fut-steps-header">
+        <span class="fut-steps-tag">FLUXO DO JOGO</span>
+        <h2 class="fut-steps-title">COMO FUNCIONA</h2>
+    </div>
+    <div class="fut-steps-grid">
+        <div class="fut-step-card">
+            <div class="fut-step-num">01</div>
+            <div class="fut-step-icon">📚</div>
+            <h4 class="fut-step-title">Escolha a Matéria</h4>
+            <p class="fut-step-desc">Selecione a disciplina que deseja estudar entre as disponíveis.</p>
+        </div>
+        <div class="fut-step-connector">
+            <div class="fut-step-line"></div>
+            <div class="fut-step-arrow-icon">▶</div>
+        </div>
+        <div class="fut-step-card">
+            <div class="fut-step-num">02</div>
+            <div class="fut-step-icon">📖</div>
+            <h4 class="fut-step-title">Leia o Livro Teórico</h4>
+            <p class="fut-step-desc">A IA gera um capítulo teórico personalizado ao seu perfil e nível.</p>
+        </div>
+        <div class="fut-step-connector">
+            <div class="fut-step-line"></div>
+            <div class="fut-step-arrow-icon">▶</div>
+        </div>
+        <div class="fut-step-card">
+            <div class="fut-step-num">03</div>
+            <div class="fut-step-icon">🎯</div>
+            <h4 class="fut-step-title">Responda Questões</h4>
+            <p class="fut-step-desc">Questões inéditas geradas por IA baseadas no livro que você leu.</p>
+        </div>
+        <div class="fut-step-connector">
+            <div class="fut-step-line"></div>
+            <div class="fut-step-arrow-icon">▶</div>
+        </div>
+        <div class="fut-step-card fut-step-card--highlight">
+            <div class="fut-step-num">04</div>
+            <div class="fut-step-icon">🏆</div>
+            <h4 class="fut-step-title">Ganhe XP & Suba</h4>
+            <p class="fut-step-desc">Cada acerto vale 10 XP. Acumule e desbloqueie conteúdos avançados.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ LEVEL SYSTEM (FUT Card Tiers) ═══ -->
+<section class="fut-tiers-section">
+    <div class="fut-tiers-header">
+        <span class="fut-steps-tag">SISTEMA DE EVOLUÇÃO</span>
+        <h2 class="fut-steps-title">NÍVEIS DO JOGADOR</h2>
+    </div>
+    <div class="fut-tiers-row">
+        <div class="fut-tier-card fut-tier-novato">
+            <div class="fut-tier-shine"></div>
+            <div class="fut-tier-top">
+                <span class="fut-tier-rating">60</span>
+                <span class="fut-tier-pos">NOV</span>
+            </div>
+            <div class="fut-tier-icon">🌱</div>
+            <div class="fut-tier-name">NOVATO</div>
+            <div class="fut-tier-range">0 — 49 XP</div>
+            <div class="fut-tier-desc">Início da jornada. Aprenda os conceitos básicos.</div>
+        </div>
+        <div class="fut-tier-card fut-tier-inter">
+            <div class="fut-tier-shine"></div>
+            <div class="fut-tier-top">
+                <span class="fut-tier-rating">78</span>
+                <span class="fut-tier-pos">INT</span>
+            </div>
+            <div class="fut-tier-icon">⚔️</div>
+            <div class="fut-tier-name">INTERMEDIÁRIO</div>
+            <div class="fut-tier-range">50 — 99 XP</div>
+            <div class="fut-tier-desc">Você está evoluindo. Questões mais complexas.</div>
+        </div>
+        <div class="fut-tier-card fut-tier-pro">
+            <div class="fut-tier-shine"></div>
+            <div class="fut-tier-top">
+                <span class="fut-tier-rating">95</span>
+                <span class="fut-tier-pos">PRO</span>
+            </div>
+            <div class="fut-tier-icon">👑</div>
+            <div class="fut-tier-name">PRO</div>
+            <div class="fut-tier-range">100+ XP</div>
+            <div class="fut-tier-desc">Elite. Domínio total. Conteúdos premium desbloqueados.</div>
+        </div>
+    </div>
+    <div class="fut-tiers-cta">
+        <a href="/materias" class="fut-btn-primary">
+            <span class="fut-btn-icon">⚡</span>
+            COMEÇAR A GANHAR XP
+        </a>
+    </div>
+</section>
+
+<!-- PAGE TRANSITION OVERLAY -->
+<div class="fut-transition-overlay" id="fut-transition"></div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+</body>
+</html>

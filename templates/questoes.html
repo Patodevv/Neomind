@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ materia }} — NeoMind</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+</head>
+<body class="nm-body fut-body">
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+<div class="nm-blob nm-blob-1"></div>
+<div class="nm-blob nm-blob-2"></div>
+
+<nav class="fut-nav">
+    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
+    <div class="fut-nav-center"><span class="fut-nav-badge">{{ materia|upper }} · {{ nivel|upper }}</span></div>
+    <div class="fut-nav-right">
+        <div class="fut-nav-user">
+            <div class="fut-nav-user-dot"></div>
+            <span class="fut-nav-username">{{ usuario.usuario }}</span>
+        </div>
+        <a href="/logout" class="fut-nav-exit">SAIR ⏏</a>
+    </div>
+</nav>
+
+<div class="nm-status-bar">
+    <span class="nm-status-dot"></span>
+    <span class="nm-status-text">{{ materia|upper }} · MODO {{ nivel|upper }} · CONTEXTO: {{ usuario.interesse|upper }}</span>
+</div>
+
+<main class="nm-main nm-quiz-layout" style="position:relative;z-index:1;">
+    <div class="nm-quiz-header">
+        <div class="nm-quiz-meta">
+            <span class="nm-tag-badge nm-tag-level-{{ nivel }}">{{ nivel|upper }}</span>
+            <span class="nm-tag-badge">{{ materia }}</span>
+            <span class="nm-tag-badge">{{ usuario.interesse|capitalize }}</span>
+        </div>
+        <h1 class="nm-quiz-title">{{ materia }} — Modo {{ nivel|upper }}</h1>
+        <p class="nm-quiz-context">Foco de Contexto: <strong>{{ usuario.interesse|capitalize }}</strong></p>
+    </div>
+
+    <div class="nm-question-card">
+        <div class="nm-question-card-header">
+            <span class="nm-question-num">QUESTÃO</span>
+            <span class="nm-question-xp-badge">+10 XP ao acertar</span>
+        </div>
+        <form method="POST" id="quiz-form">
+            <div class="nm-question-text">{{ pergunta.titulo }}</div>
+            <div class="nm-alternatives">
+                {% for letter in ['a', 'b', 'c', 'd'] %}
+                <label class="nm-alt-label" for="resp-{{ letter }}">
+                    <input type="radio" class="nm-alt-radio" name="resposta" id="resp-{{ letter }}" value="{{ letter }}" required>
+                    <span class="nm-alt-letter">{{ letter|upper }}</span>
+                    <span class="nm-alt-text">{{ pergunta[letter] }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            {% if not resultado %}
+            <button type="submit" class="nm-btn-submit-quiz">⚡ Enviar Resposta</button>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if resultado %}
+    <div class="nm-result-panel {% if 'Acertou' in resultado %}nm-result-win{% else %}nm-result-lose{% endif %}">
+        <div class="nm-result-header">
+            <span class="nm-result-icon">{% if 'Acertou' in resultado %}🏆{% else %}💀{% endif %}</span>
+            <div>
+                <h2 class="nm-result-title">{{ resultado }}</h2>
+                {% if pontos_ganhos > 0 %}
+                <div class="nm-xp-pop">+{{ pontos_ganhos }} XP (Total: {{ usuario.pontos }} XP)</div>
+                {% endif %}
+            </div>
+        </div>
+        <a href="/questoes/{{ materia }}/{{ nivel }}" class="nm-btn-next-question">🔄 Próxima Questão →</a>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:1.5rem; text-align:center;">
+        <a href="/questoes/{{ materia }}" class="nm-breadcrumb">← Voltar para a Árvore de Módulos</a>
+    </div>
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+</body>
+</html>

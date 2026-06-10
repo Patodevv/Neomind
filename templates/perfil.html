@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil — NeoMind</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+</head>
+<body class="nm-body fut-body">
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+<div class="nm-blob nm-blob-1"></div>
+<div class="nm-blob nm-blob-2"></div>
+
+<nav class="fut-nav">
+    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
+    <div class="fut-nav-center"><span class="fut-nav-badge">PERFIL DO JOGADOR</span></div>
+    <div class="fut-nav-right">
+        <div class="fut-nav-user">
+            <div class="fut-nav-user-dot"></div>
+            <span class="fut-nav-username">{{ usuario.usuario }}</span>
+        </div>
+        <a href="/logout" class="fut-nav-exit">SAIR ⏏</a>
+    </div>
+</nav>
+
+<div class="nm-status-bar">
+    <span class="nm-status-dot"></span>
+    <span class="nm-status-text">PERFIL DO JOGADOR · GERENCIAR CONTA</span>
+</div>
+
+<main class="nm-main" style="position:relative;z-index:1;">
+    <div class="nm-page-header">
+        <a href="/dashboard" class="nm-breadcrumb">← Dashboard</a>
+        <h1 class="nm-page-title">Perfil do <em>Jogador</em></h1>
+    </div>
+
+    <div class="nm-profile-layout">
+        <!-- PLAYER CARD -->
+        <div class="nm-player-card-big">
+            <div class="nm-player-card-bg"></div>
+            <div class="nm-player-avatar-wrap">
+                {% if usuario.foto and usuario.foto != 'default.png' %}
+                <img src="{{ url_for('static', filename='uploads/' + usuario.foto) }}" alt="Avatar" class="nm-player-avatar">
+                {% else %}
+                <div class="nm-player-avatar-placeholder">{{ usuario.usuario[0]|upper }}</div>
+                {% endif %}
+                <span class="nm-player-level-ring nm-ring-{{ usuario.nivel }}"></span>
+            </div>
+            <h2 class="nm-player-username">@{{ usuario.usuario }}</h2>
+            <span class="nm-player-interest-badge">{{ usuario.interesse|capitalize }}</span>
+            <div class="nm-player-stats-row">
+                <div class="nm-pstat">
+                    <span class="nm-pstat-val">{{ usuario.pontos }}</span>
+                    <span class="nm-pstat-label">XP Total</span>
+                </div>
+                <div class="nm-pstat-div"></div>
+                <div class="nm-pstat">
+                    <span class="nm-pstat-val nm-level-badge-{{ usuario.nivel }}">{{ usuario.nivel|upper }}</span>
+                    <span class="nm-pstat-label">Nível</span>
+                </div>
+            </div>
+            <div class="nm-xp-bar-wrap">
+                {% if usuario.nivel == 'novato' %}
+                {% set pct = (usuario.pontos / 50 * 100)|int %}
+                <div class="nm-xp-bar-labels"><span>Novato</span><span>50 XP → Inter</span></div>
+                {% elif usuario.nivel == 'intermediario' %}
+                {% set pct = ((usuario.pontos - 50) / 50 * 100)|int %}
+                <div class="nm-xp-bar-labels"><span>Intermediário</span><span>100 XP → Pro</span></div>
+                {% else %}
+                {% set pct = 100 %}
+                <div class="nm-xp-bar-labels"><span>PRO</span><span>Nível máximo!</span></div>
+                {% endif %}
+                <div class="nm-xp-bar">
+                    <div class="nm-xp-bar-fill"></div>
+                </div>
+            </div>
+            <div class="nm-player-bio-box">
+                <span class="nm-sidebar-label">💬 Recado</span>
+                <p>"{{ usuario.recado }}"</p>
+            </div>
+        </div>
+
+        <!-- EDIT FORM -->
+        <div class="nm-edit-form-card">
+            <h3 class="nm-edit-form-title">Editar Perfil</h3>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="nm-input-group">
+                    <label>Foto de Perfil</label>
+                    <label for="foto" class="nm-file-upload-btn">📸 Escolher Imagem</label>
+                    <input type="file" name="foto" id="foto" accept="image/*" onchange="showFile(this)" style="display:none;">
+                    <span id="file-preview" class="nm-file-preview">Nenhum arquivo selecionado</span>
+                </div>
+                <div class="nm-input-group">
+                    <label for="recado">Bio / Recado</label>
+                    <textarea name="recado" id="recado" rows="3" class="nm-textarea" placeholder="Escreva algo sobre você..." required>{{ usuario.recado }}</textarea>
+                </div>
+                <div class="nm-input-group">
+                    <label for="interesse">Universo Favorito</label>
+                    <select name="interesse" id="interesse" class="nm-select" required>
+                        <option value="animes" {% if usuario.interesse == 'animes' %}selected{% endif %}>⚔️ Animes</option>
+                        <option value="jogos" {% if usuario.interesse == 'jogos' %}selected{% endif %}>🎮 Games</option>
+                        <option value="esportes" {% if usuario.interesse == 'esportes' %}selected{% endif %}>⚽ Esportes</option>
+                    </select>
+                </div>
+                <button type="submit" class="nm-btn-cta" style="width:100%;margin-top:0.5rem;">Salvar Alterações ✓</button>
+            </form>
+        </div>
+    </div>
+</main>
+<script>function showFile(input) { document.getElementById('file-preview').textContent = input.files[0]?.name || 'Nenhum arquivo'; }</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trilha de {{ materia }} — NeoMind</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard-fut.css') }}">
+</head>
+<body class="nm-body fut-body">
+<canvas id="fut-particles" class="fut-particles-canvas"></canvas>
+<div class="nm-blob nm-blob-1"></div>
+<div class="nm-blob nm-blob-2"></div>
+
+<nav class="fut-nav">
+    <div class="fut-nav-logo"><span class="fut-nav-logo-icon">⚡</span>Neo<span>Mind</span></div>
+    <div class="fut-nav-center"><span class="fut-nav-badge">TRILHA · {{ materia|upper }}</span></div>
+    <div class="fut-nav-right">
+        <div class="fut-nav-user">
+            <div class="fut-nav-user-dot"></div>
+            <span class="fut-nav-username">{{ usuario.usuario }}</span>
+        </div>
+        <a href="/logout" class="fut-nav-exit">SAIR ⏏</a>
+    </div>
+</nav>
+
+<div class="nm-status-bar">
+    <span class="nm-status-dot"></span>
+    <span class="nm-status-text">{{ materia|upper }} · SELECIONE O MÓDULO</span>
+</div>
+
+<main class="nm-main" style="position:relative;z-index:1;">
+    <div class="nm-page-header">
+        <a href="/materias" class="nm-breadcrumb">← Matérias</a>
+        <h1 class="nm-page-title">Trilha: <em>{{ materia }}</em></h1>
+        <p class="nm-page-sub">Progresso: <strong>{{ usuario.pontos }} XP</strong> &nbsp;·&nbsp; Nível: <strong>{{ usuario.nivel.upper() }}</strong></p>
+    </div>
+
+    <div class="nm-topics-list">
+        <div class="nm-topic-card">
+            <div class="nm-topic-card-header">
+                <div class="nm-topic-icon">🌱</div>
+                <div>
+                    <h2 class="nm-topic-title">Módulo Iniciante</h2>
+                    <p class="nm-topic-hint">Conceitos fundamentais para começar.</p>
+                </div>
+            </div>
+            <div class="nm-topic-levels">
+                <a href="/questoes/{{ materia }}/novato" class="nm-level-btn nm-level-btn-novato">
+                    <span class="nm-level-btn-icon">🌱</span>
+                    <span class="nm-level-btn-text"><strong>Estudar Novato</strong></span>
+                    <span class="nm-level-btn-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        {% if 'intermediario' in niveis_liberados %}
+        <div class="nm-topic-card">
+            <div class="nm-topic-card-header">
+                <div class="nm-topic-icon">⚔️</div>
+                <div>
+                    <h2 class="nm-topic-title">Módulo Intermediário</h2>
+                    <p class="nm-topic-hint">Conteúdo avançado para evoluir.</p>
+                </div>
+            </div>
+            <div class="nm-topic-levels">
+                <a href="/questoes/{{ materia }}/intermediario" class="nm-level-btn nm-level-btn-inter">
+                    <span class="nm-level-btn-icon">⚔️</span>
+                    <span class="nm-level-btn-text"><strong>Estudar Intermediário</strong></span>
+                    <span class="nm-level-btn-arrow">→</span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if 'pro' in niveis_liberados %}
+        <div class="nm-topic-card">
+            <div class="nm-topic-card-header">
+                <div class="nm-topic-icon">👑</div>
+                <div>
+                    <h2 class="nm-topic-title">Módulo Pro</h2>
+                    <p class="nm-topic-hint">Desafio supremo para os mestres.</p>
+                </div>
+            </div>
+            <div class="nm-topic-levels">
+                <a href="/questoes/{{ materia }}/pro" class="nm-level-btn nm-level-btn-pro">
+                    <span class="nm-level-btn-icon">👑</span>
+                    <span class="nm-level-btn-text"><strong>Estudar PRO</strong></span>
+                    <span class="nm-level-btn-arrow">→</span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top:2rem; text-align:center;">
+        <a href="/materias" class="nm-breadcrumb">← Voltar para Matérias</a>
+    </div>
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard-fut.js') }}"></script>
+</body>
+</html>

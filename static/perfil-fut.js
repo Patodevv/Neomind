@@ -80,8 +80,18 @@
        5. FILE INPUT — PREVIEW + AVATAR PREVIEW
     ───────────────────────────────────────────── */
     const fotoInput = document.getElementById('foto');
+    const fileLabel = document.getElementById('pfut-file-label');
     const filePreview = document.getElementById('file-preview');
     const avatarEl = document.getElementById('pfut-avatar');
+
+    // Dispara o input diretamente via JS ao clicar no label-botão.
+    // Isso garante o funcionamento mesmo quando o CSS interfere no evento nativo do <label for>.
+    if (fileLabel && fotoInput) {
+        fileLabel.addEventListener('click', function (e) {
+            e.preventDefault();
+            fotoInput.click();
+        });
+    }
 
     if (fotoInput) {
         fotoInput.addEventListener('change', function () {
